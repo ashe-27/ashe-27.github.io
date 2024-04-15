@@ -11,7 +11,7 @@
   
   <title>
     
-      WinDbg 远程调试配置 
+      WinDbg 配置调试服务器 
       
       
       |
@@ -142,11 +142,11 @@
   <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
   <div class="container post-details" id="post-details">
     <div class="post-content">
-      <div class="post-title">WinDbg 远程调试配置</div>
+      <div class="post-title">WinDbg 配置调试服务器</div>
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2024-04-11 22:36:23
+          2024-04-15 08:42:08
         </span>
         
               <span class="post-tags">
@@ -162,7 +162,39 @@
           
       </div>
       <div class="markdown-body">
-        
+        <p>WinDbg 支持远程调试，支持协议：命名管道 (NPIPE)、TCP、COM 端口、安全管道 (SPIPE) 和安全套接字层 (SSL)。<br>如今绝大多数只会用到 COM 和 TCP 通信。走 COM 协议一般是用来调试系统内核，而应用层软件调试基本就是用 TCP。</p>
+<h2 id="用-WinDbg-exe-建立服务器"><a href="#用-WinDbg-exe-建立服务器" class="headerlink" title="用 WinDbg.exe 建立服务器"></a>用 WinDbg.exe 建立服务器</h2><h3 id="启动调试服务器"><a href="#启动调试服务器" class="headerlink" title="启动调试服务器"></a>启动调试服务器</h3><ul>
+<li><p>通过命令行参数启动</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">windbg.exe -server tcp:port=5000</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过调试命令启动<br><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/debuggercmds/-server--create-debugging-server-">.server</a> 用于启动一个调试服务器。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.server tcp:port=5000</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="连接调试服务器"><a href="#连接调试服务器" class="headerlink" title="连接调试服务器"></a>连接调试服务器</h3><ul>
+<li><p>通过命令行参数连接<br><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/debuggercmds/-remote--create-remote-exe-server-">.remote</a> 用于连接调试服务器。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">windbg.exe -remote tcp:server=192.168.175.134,port=5000</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过 WinDbg 图形界面操作<br>按下<code>Ctrl + R</code>打开<code>Connect to Remote Debugger Session</code>窗口并输入调试服务器地址：<br><img src="/images/windbg-remote/01.webp"><br>输入服务器地址：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcp:server=192.168.175.134,port=5000</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="用-dbgsrv-exe-建立调试服务器"><a href="#用-dbgsrv-exe-建立调试服务器" class="headerlink" title="用 dbgsrv.exe 建立调试服务器"></a>用 dbgsrv.exe 建立调试服务器</h2><p>与 windbg 作为调试服务器的区别是无界面，全程在客户端即可操作。但是要求双方的 windbg 版本一致，否则附加进程列表显示为空。<br>通过命令行参数启动服务器：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dbgsrv.exe -t tcp:port=5000</span><br></pre></td></tr></table></figure>
+
+<h3 id="连接服务器"><a href="#连接服务器" class="headerlink" title="连接服务器"></a>连接服务器</h3><ul>
+<li><p>客户端通过<code>-premote</code>来连接。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">windbg.exe -premote tcp:server=192.168.175.134,port=5000</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过 WinDbg 图形界面操作<br>打开<code>File</code>菜单，选择<code>Connect to Remote Stub...</code>。<br><img src="/images/windbg-remote/02.webp"><br>输入服务器地址，和前面一样：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcp:server=192.168.175.134,port=5000</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>windbg 和 dbgsrv 都可以作为调试服务器，但有些区别：</p>
+<ul>
+<li>windbg 会出现图形界面，双方均可输入调试命令并且操作是同步的。而 dbgsrv 仅在后台工作，调试完全在控制端进行。</li>
+<li>windbg 作为服务器时，符号文件缓存在被控端本地。而用 dbgsrv 时符号文件在控制端。</li>
+<li>windbg 作为服务器时，不要求双方 windbg 的版本一致。而用 dbgsrv 时则要求 windbg 版本一致，否则无法附加程序。</li>
+</ul>
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/debugger/activating-a-debugging-server">激活调试服务器</a><br><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/debugger/windbg-command-line-options">WinDbg 命令行选项</a><br><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/debugger/dbgsrv-command-line-options">DbgSrv 命令行选项</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/kekec/archive/2012/12/02/2798020.html">windbg调试命令</a></p>
+
       </div>
       
         <div class="prev-or-next">
@@ -177,7 +209,7 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2024-04-11 22:36:23
+              2024-04-15 08:42:08
             </span>
             
                   <span class="post-tags">
@@ -194,11 +226,33 @@
           </div>
           <div class="post-foot-prev">
             
+              <a href="/2024/04/14/vc-redist/" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
           </div>
         </div>
       
     </div>
     
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%A8-WinDbg-exe-%E5%BB%BA%E7%AB%8B%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">用 WinDbg.exe 建立服务器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8%E8%B0%83%E8%AF%95%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">启动调试服务器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E8%B0%83%E8%AF%95%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">连接调试服务器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%A8-dbgsrv-exe-%E5%BB%BA%E7%AB%8B%E8%B0%83%E8%AF%95%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">用 dbgsrv.exe 建立调试服务器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">连接服务器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="toc-text">相关阅读</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
 
     
   </div>
@@ -457,7 +511,7 @@
       </a>
       <div class="share-content hidden">
         
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + WinDbg%20%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E9%85%8D%E7%BD%AE + '&url=' + https%3A%2F%2Fashe27.github.io%2F2024%2F04%2F11%2Fwindbg-remote%2F + '" target="_blank" title="Twitter">
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + WinDbg%20%E9%85%8D%E7%BD%AE%E8%B0%83%E8%AF%95%E6%9C%8D%E5%8A%A1%E5%99%A8 + '&url=' + https%3A%2F%2Fashe27.github.io%2F2024%2F04%2F11%2Fwindbg-remote%2F + '" target="_blank" title="Twitter">
             <i class="iconfont icon-twitter"></i>
           </a>
         
