@@ -11,7 +11,7 @@
   
   <title>
     
-      .NET 获取 EXE 所在目录的方法 
+      解决 Directory.Build.targets 无法覆盖 OutputPath 属性的问题 
       
       
       |
@@ -142,19 +142,25 @@
   <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
   <div class="container post-details" id="post-details">
     <div class="post-content">
-      <div class="post-title">.NET 获取 EXE 所在目录的方法</div>
+      <div class="post-title">解决 Directory.Build.targets 无法覆盖 OutputPath 属性的问题</div>
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2024-04-15 23:06:40
+          2024-04-18 21:35:40
         </span>
         
               <span class="post-tags">
                 <i class="iconfont icon-tags mr-10" title="标签"></i>
                 
                 <span class="span--tag mr-8">
-                  <a href="/tags/NET/" title="NET">
-                    #NET
+                  <a href="/tags/dotnet/" title=".NET">
+                    #.NET
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/MSBuild/" title="MSBuild">
+                    #MSBuild
                   </a>
                 </span>
                 
@@ -162,22 +168,41 @@
           
       </div>
       <div class="markdown-body">
-        <p>获取 EXE 所在目录可以先获取 EXE 完整路径，再提取出目录。不过本文不讲，因为有内置方法可以直接获取目录。<br>.NET 中有5种方式获取 EXE 目录，先看看例子：</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Debug.WriteLine(<span class="string">&quot;Directory.GetCurrentDirectory(): &quot;</span> + Directory.GetCurrentDirectory());</span><br><span class="line">Debug.WriteLine(<span class="string">&quot;Environment.CurrentDirectory: &quot;</span> + Environment.CurrentDirectory);</span><br><span class="line">Debug.WriteLine(<span class="string">&quot;AppDomain.CurrentDomain.BaseDirectory:&quot;</span> + AppDomain.CurrentDomain.BaseDirectory);</span><br><span class="line">Debug.WriteLine(<span class="string">&quot;AppDomain.CurrentDomain.SetupInformation.ApplicationBase: &quot;</span> + AppDomain.CurrentDomain.SetupInformation.ApplicationBase);</span><br><span class="line">Debug.WriteLine(<span class="string">&quot;Application.StartupPath: &quot;</span> + Application.StartupPath);</span><br></pre></td></tr></table></figure>
-<p>双击方式启动 EXE，得到以下输出：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Directory.GetCurrentDirectory(): C:\dir</span><br><span class="line">Environment.CurrentDirectory: C:\dir</span><br><span class="line">AppDomain.CurrentDomain.BaseDirectory:C:\dir\</span><br><span class="line">AppDomain.CurrentDomain.SetupInformation.ApplicationBase:C:\dir\</span><br><span class="line">Application.StartupPath: C:\dir</span><br></pre></td></tr></table></figure>
-<p>再将起始位置切换到其他目录，用 CMD 方式启动：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd C:</span><br><span class="line">C:\dir\demo.exe</span><br></pre></td></tr></table></figure>
-<p>这样启动，工作目录就是<code>C:\</code>，得到以下输出：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Directory.GetCurrentDirectory(): C:\ </span><br><span class="line">Environment.CurrentDirectory: C:\ </span><br><span class="line">AppDomain.CurrentDomain.BaseDirectory: c:\dir\ </span><br><span class="line">AppDomain.CurrentDomain.SetupInformation.ApplicationBase: c:\dir\ </span><br><span class="line">Application.StartupPath: c:\dir </span><br></pre></td></tr></table></figure>
-<p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/dotnet/api/system.io.directory.getcurrentdirectory">Directory.GetCurrentDirectory</a> 和 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/dotnet/api/system.environment.currentdirectory">Environment.CurrentDirectory</a> 返回的是工作目录，不符合预期。<br><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/dotnet/api/system.windows.forms.application.startuppath">Application.StartupPath</a> 是 WinForms 程序特定属性，不是最优选择。<br><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/dotnet/api/system.appdomainsetup.applicationbase">AppDomainSetup.ApplicationBase</a> 属性可修改，不可靠。<br>最后就只剩下 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/dotnet/api/system.appdomain.basedirectory">AppDomain.CurrentDomain.BaseDirectory</a> 了，是一个只读属性，不依赖 WinForms，推荐使用。</p>
+        <p>在管理多个工程时，通常需要根据工程的属性并按照指定的规则来决定二进制文件的输出位置。合适的做法是在<code>Directory.Build.targets</code>文件中设置<code>OutputPath</code>属性。<br>然而实测发现并没有<code>Directory.Build.targets</code>文件中的<code>OutputPath</code>并未生效。<br>Google 一番后找到两种解决办法。</p>
+<h2 id="BeforeTargetFrameworkInferenceTargets-属性"><a href="#BeforeTargetFrameworkInferenceTargets-属性" class="headerlink" title="BeforeTargetFrameworkInferenceTargets 属性"></a>BeforeTargetFrameworkInferenceTargets 属性</h2><p>这个属性出现在 <a target="_blank" rel="noopener" href="https://github.com/dotnet/sdk/blob/14b117b7088653b694e16ac2071fcbf634a2a9ab/src/Tasks/Microsoft.NET.Build.Tasks/targets/Microsoft.NET.TargetFrameworkInference.targets#L47">Microsoft.NET.TargetFrameworkInference.targets</a> 文件中，并没有官方的文档。<br>我们可以在<code>Directory.Build.props</code>中设置它：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">BeforeTargetFrameworkInferenceTargets</span>&gt;</span>$(MSBuildThisFileDirectory)OutputBuild.props<span class="tag">&lt;/<span class="name">BeforeTargetFrameworkInferenceTargets</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>然后在<code>OutputBuild.props</code>中覆盖<code>OutputPath</code>，这里是可以使用自定义属性的。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Project</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">PropertyGroup</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">OutputPath</span>&gt;</span>bin\$(Foo)<span class="tag">&lt;/<span class="name">OutputPath</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">PropertyGroup</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">Project</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="props-和-targets-文件之前和之后"><a href="#props-和-targets-文件之前和之后" class="headerlink" title=".props 和 .targets 文件之前和之后"></a>.props 和 .targets 文件之前和之后</h2><p>比起没有文档的<code>BeforeTargetFrameworkInferenceTargets</code>属性，MSBuild 提供了一系列”钩子”属性，可以在<code>Microsoft.Common.Props</code>或<code>Microsoft.Common.Targets</code>文件的前后执行。</p>
+<ul>
+<li>CustomBeforeMicrosoftCommonProps</li>
+<li>CustomBeforeMicrosoftCommonTargets</li>
+<li>CustomAfterMicrosoftCommonProps</li>
+<li>CustomAfterMicrosoftCommonTargets</li>
+<li>CustomBeforeMicrosoftCSharpTargets</li>
+<li>CustomBeforeMicrosoftVisualBasicTargets</li>
+<li>CustomAfterMicrosoftCSharpTargets</li>
+<li>CustomAfterMicrosoftVisualBasicTargets</li>
+</ul>
+<p><br>从名字上看，我们只关心前面四个。测试一下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Project</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">PropertyGroup</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">CustomBeforeMicrosoftCommonProps</span>&gt;</span>$(MSBuildThisFileDirectory)BeforeMicrosoftCommon.props<span class="tag">&lt;/<span class="name">CustomBeforeMicrosoftCommonProps</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">CustomAfterMicrosoftCommonProps</span>&gt;</span>$(MSBuildThisFileDirectory)AfterMicrosoftCommon.props<span class="tag">&lt;/<span class="name">CustomAfterMicrosoftCommonProps</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">CustomBeforeMicrosoftCommonTargets</span>&gt;</span>$(MSBuildThisFileDirectory)BeforeMicrosoftCommon.targets<span class="tag">&lt;/<span class="name">CustomBeforeMicrosoftCommonTargets</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">CustomAfterMicrosoftCommonProps</span>&gt;</span>$(MSBuildThisFileDirectory)AfterMicrosoftCommon.props<span class="tag">&lt;/<span class="name">CustomAfterMicrosoftCommonProps</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">PropertyGroup</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">Project</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>这四个文件的载入顺序是：</p>
+<ol>
+<li>CustomBeforeMicrosoftCommonProps。可覆盖<code>OutputPath</code>属性，但不可以使用工程的自定义属性。</li>
+<li>CustomAfterMicrosoftCommonProps。可覆盖<code>OutputPath</code>属性，但不可以使用工程的自定义属性。</li>
+<li>CustomBeforeMicrosoftCommonTargets。可使用工程的自定义属性。</li>
+<li>CustomAfterMicrosoftCommonTargets。无法覆盖<code>OutputPath</code>属性。</li>
+</ol>
+<p><br>所以，我们有机会在<code>CustomBeforeMicrosoftCommonTargets</code>中覆盖<code>OutputPath</code>属性。</p>
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><p><a target="_blank" rel="noopener" href="https://github.com/dotnet/msbuild/discussions/7669">setting OutputPath in a Directory.Build.targets</a><br><a target="_blank" rel="noopener" href="https://nietras.com/2022/01/24/bendingdotnet-improved-common-flat-build-output/">Bending .NET - Improved Common Flat Build Output</a><br><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/visualstudio/msbuild/customize-net-builds">自定义所有 .NET 生成</a><br><a target="_blank" rel="noopener" href="https://github.com/dotnet/msbuild/issues/2767">Document the import order of the common msbuild extension points.</a></p>
 
       </div>
       
         <div class="prev-or-next">
           <div class="post-foot-next">
             
-              <a href="/2024/04/14/net-unhandledexception/" target="_self">
+              <a href="/2024/04/15/net-get-exedir/" target="_self">
                 <i class="iconfont icon-chevronleft"></i>
                 <span>上一页</span>
               </a>
@@ -186,15 +211,21 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2024-04-15 23:06:40
+              2024-04-18 21:35:40
             </span>
             
                   <span class="post-tags">
                     <i class="iconfont icon-tags mr-10" title="标签"></i>
                     
                     <span class="span--tag mr-8">
-                      <a href="/tags/NET/" title="NET">
-                        #NET
+                      <a href="/tags/dotnet/" title=".NET">
+                        #.NET
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/MSBuild/" title="MSBuild">
+                        #MSBuild
                       </a>
                     </span>
                     
@@ -203,16 +234,28 @@
           </div>
           <div class="post-foot-prev">
             
-              <a href="/2024/04/18/BeforeTargetFrameworkInferenceTargets/" target="_self">
-                <span>下一页</span>
-                <i class="iconfont icon-chevronright"></i>
-              </a>
-            
           </div>
         </div>
       
     </div>
     
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#BeforeTargetFrameworkInferenceTargets-%E5%B1%9E%E6%80%A7"><span class="toc-text">BeforeTargetFrameworkInferenceTargets 属性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#props-%E5%92%8C-targets-%E6%96%87%E4%BB%B6%E4%B9%8B%E5%89%8D%E5%92%8C%E4%B9%8B%E5%90%8E"><span class="toc-text">.props 和 .targets 文件之前和之后</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="toc-text">相关阅读</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
 
     
   </div>
@@ -471,12 +514,12 @@
       </a>
       <div class="share-content hidden">
         
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + .NET%20%E8%8E%B7%E5%8F%96%20EXE%20%E6%89%80%E5%9C%A8%E7%9B%AE%E5%BD%95%E7%9A%84%E6%96%B9%E6%B3%95 + '&url=' + https%3A%2F%2Fashe27.github.io%2F2024%2F04%2F15%2Fnet-get-exedir%2F + '" target="_blank" title="Twitter">
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E8%A7%A3%E5%86%B3%20Directory.Build.targets%20%E6%97%A0%E6%B3%95%E8%A6%86%E7%9B%96%20OutputPath%20%E5%B1%9E%E6%80%A7%E7%9A%84%E9%97%AE%E9%A2%98 + '&url=' + https%3A%2F%2Fashe27.github.io%2F2024%2F04%2F18%2FBeforeTargetFrameworkInferenceTargets%2F + '" target="_blank" title="Twitter">
             <i class="iconfont icon-twitter"></i>
           </a>
         
         
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://ashe27.github.io/2024/04/15/net-get-exedir/" target="_blank" title="Facebook">
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://ashe27.github.io/2024/04/18/BeforeTargetFrameworkInferenceTargets/" target="_blank" title="Facebook">
             <i class="iconfont icon-facebooksquare"></i>
           </a>
         
