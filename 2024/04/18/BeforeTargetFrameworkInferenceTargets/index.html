@@ -146,7 +146,7 @@
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2024-04-18 21:35:40
+          2024-04-18 21:38:10
         </span>
         
               <span class="post-tags">
@@ -168,7 +168,7 @@
           
       </div>
       <div class="markdown-body">
-        <p>在管理多个工程时，通常需要根据工程的属性并按照指定的规则来决定二进制文件的输出位置。合适的做法是在<code>Directory.Build.targets</code>文件中设置<code>OutputPath</code>属性。<br>然而实测发现并没有<code>Directory.Build.targets</code>文件中的<code>OutputPath</code>并未生效。<br>Google 一番后找到两种解决办法。</p>
+        <p>在管理多个工程时，通常需要根据工程的属性并按照指定的规则来决定二进制文件的输出位置。第一直觉是在<code>Directory.Build.targets</code>文件中设置<code>OutputPath</code>属性。<br>然而实测发现<code>Directory.Build.targets</code>文件中的<code>OutputPath</code>并未生效。<br>Google 一番后找到两种解决办法。</p>
 <h2 id="BeforeTargetFrameworkInferenceTargets-属性"><a href="#BeforeTargetFrameworkInferenceTargets-属性" class="headerlink" title="BeforeTargetFrameworkInferenceTargets 属性"></a>BeforeTargetFrameworkInferenceTargets 属性</h2><p>这个属性出现在 <a target="_blank" rel="noopener" href="https://github.com/dotnet/sdk/blob/14b117b7088653b694e16ac2071fcbf634a2a9ab/src/Tasks/Microsoft.NET.Build.Tasks/targets/Microsoft.NET.TargetFrameworkInference.targets#L47">Microsoft.NET.TargetFrameworkInference.targets</a> 文件中，并没有官方的文档。<br>我们可以在<code>Directory.Build.props</code>中设置它：</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">BeforeTargetFrameworkInferenceTargets</span>&gt;</span>$(MSBuildThisFileDirectory)OutputBuild.props<span class="tag">&lt;/<span class="name">BeforeTargetFrameworkInferenceTargets</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>然后在<code>OutputBuild.props</code>中覆盖<code>OutputPath</code>，这里是可以使用自定义属性的。</p>
@@ -211,7 +211,7 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2024-04-18 21:35:40
+              2024-04-18 21:38:10
             </span>
             
                   <span class="post-tags">
