@@ -11,7 +11,7 @@
   
   <title>
     
-      解决 Directory.Build.targets 无法覆盖 OutputPath 属性的问题 
+      Directory.Build.targets 无法覆盖 OutputPath 属性 
       
       
       |
@@ -142,11 +142,11 @@
   <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
   <div class="container post-details" id="post-details">
     <div class="post-content">
-      <div class="post-title">解决 Directory.Build.targets 无法覆盖 OutputPath 属性的问题</div>
+      <div class="post-title">Directory.Build.targets 无法覆盖 OutputPath 属性</div>
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2024-04-18 21:38:10
+          2024-04-20 23:19:40
         </span>
         
               <span class="post-tags">
@@ -186,7 +186,7 @@
 <li>CustomAfterMicrosoftVisualBasicTargets</li>
 </ul>
 <p><br>从名字上看，我们只关心前面四个。测试一下：</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Project</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">PropertyGroup</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">CustomBeforeMicrosoftCommonProps</span>&gt;</span>$(MSBuildThisFileDirectory)BeforeMicrosoftCommon.props<span class="tag">&lt;/<span class="name">CustomBeforeMicrosoftCommonProps</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">CustomAfterMicrosoftCommonProps</span>&gt;</span>$(MSBuildThisFileDirectory)AfterMicrosoftCommon.props<span class="tag">&lt;/<span class="name">CustomAfterMicrosoftCommonProps</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">CustomBeforeMicrosoftCommonTargets</span>&gt;</span>$(MSBuildThisFileDirectory)BeforeMicrosoftCommon.targets<span class="tag">&lt;/<span class="name">CustomBeforeMicrosoftCommonTargets</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">CustomAfterMicrosoftCommonProps</span>&gt;</span>$(MSBuildThisFileDirectory)AfterMicrosoftCommon.props<span class="tag">&lt;/<span class="name">CustomAfterMicrosoftCommonProps</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">PropertyGroup</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">Project</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Project</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">PropertyGroup</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">CustomBeforeMicrosoftCommonProps</span>&gt;</span>$(MSBuildThisFileDirectory)BeforeMicrosoftCommon.props<span class="tag">&lt;/<span class="name">CustomBeforeMicrosoftCommonProps</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">CustomAfterMicrosoftCommonProps</span>&gt;</span>$(MSBuildThisFileDirectory)AfterMicrosoftCommon.props<span class="tag">&lt;/<span class="name">CustomAfterMicrosoftCommonProps</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">CustomBeforeMicrosoftCommonTargets</span>&gt;</span>$(MSBuildThisFileDirectory)BeforeMicrosoftCommon.targets<span class="tag">&lt;/<span class="name">CustomBeforeMicrosoftCommonTargets</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">CustomAfterMicrosoftCommonTargets</span>&gt;</span>$(MSBuildThisFileDirectory)AfterMicrosoftCommon.targets<span class="tag">&lt;/<span class="name">CustomAfterMicrosoftCommonTargets</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">PropertyGroup</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">Project</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>这四个文件的载入顺序是：</p>
 <ol>
 <li>CustomBeforeMicrosoftCommonProps。可覆盖<code>OutputPath</code>属性，但不可以使用工程的自定义属性。</li>
@@ -211,7 +211,7 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2024-04-18 21:38:10
+              2024-04-20 23:19:40
             </span>
             
                   <span class="post-tags">
@@ -233,6 +233,11 @@
               
           </div>
           <div class="post-foot-prev">
+            
+              <a href="/2024/04/20/net-dll-entrypoint/" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
             
           </div>
         </div>
@@ -514,12 +519,12 @@
       </a>
       <div class="share-content hidden">
         
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E8%A7%A3%E5%86%B3%20Directory.Build.targets%20%E6%97%A0%E6%B3%95%E8%A6%86%E7%9B%96%20OutputPath%20%E5%B1%9E%E6%80%A7%E7%9A%84%E9%97%AE%E9%A2%98 + '&url=' + https%3A%2F%2Fashe27.github.io%2F2024%2F04%2F18%2FBeforeTargetFrameworkInferenceTargets%2F + '" target="_blank" title="Twitter">
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Directory.Build.targets%20%E6%97%A0%E6%B3%95%E8%A6%86%E7%9B%96%20OutputPath%20%E5%B1%9E%E6%80%A7 + '&url=' + https%3A%2F%2Fashe27.github.io%2F2024%2F04%2F18%2Fmsbuild-outputpath%2F + '" target="_blank" title="Twitter">
             <i class="iconfont icon-twitter"></i>
           </a>
         
         
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://ashe27.github.io/2024/04/18/BeforeTargetFrameworkInferenceTargets/" target="_blank" title="Facebook">
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://ashe27.github.io/2024/04/18/msbuild-outputpath/" target="_blank" title="Facebook">
             <i class="iconfont icon-facebooksquare"></i>
           </a>
         

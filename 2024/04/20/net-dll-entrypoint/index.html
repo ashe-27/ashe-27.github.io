@@ -11,6 +11,11 @@
   
   <title>
     
+      .NET DLL 的入口点 
+      
+      
+      |
+    
      ashe&#39;s blog
   </title>
 
@@ -92,149 +97,144 @@
 
 
       <div class="flex-container">
-        <div class="container index">
-  <div class="post-list">
-    <!-- 遍历渲染文章 -->
-    
-      <div class="post-item" title=".NET 项目 SDK 介绍">
-        <div class="time-m-d">2024-04-21</div>
-        <div class="title">
-          <a href="/2024/04/21/msbuild-project-sdk/">
-            
-              
-                <span>.NET 项目 SDK 介绍</span>
-              
-            
-          </a>
-        </div>
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">.NET DLL 的入口点</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2024-04-20 23:13:32
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/dotnet/" title=".NET">
+                    #.NET
+                  </a>
+                </span>
+                
+              </span>
+          
       </div>
-    
-      <div class="post-item" title=".NET DLL 的入口点">
-        <div class="time-m-d">2024-04-20</div>
-        <div class="title">
-          <a href="/2024/04/20/net-dll-entrypoint/">
-            
-              
-                <span>.NET DLL 的入口点</span>
-              
-            
-          </a>
-        </div>
+      <div class="markdown-body">
+        <p>在用开发 DLL 模块时，DLL 往往需要知道自身何时被加载，以便初始化资源。<br>在非托管 DLL 开发中，是有 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows/win32/dlls/dllmain">DllMain</a> 入口点函数的，在这里可以处理初始化、卸载等操作。<br>而在 .NET 中，DLL 和 EXE 都被称作为 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/dotnet/standard/assembly/">程序集</a>，程序集之间可以相互调用，无论是 EXE 或 DLL，这是与 Win32 开发中很大的一个不同之处。<br>而 DLL 程序集是没有入口点(<a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/dotnet/api/system.reflection.assembly.entrypoint">EntryPoint</a>)属性的。<br><br>那么如何解决 DLL 的初始化问题呢？<br>可以提供一个静态初始化方法，要求使用者必须先调用该方法进行 DLL 的初始化。但是这种解决方案一点都不酷。</p>
+<p>在 .NET 程序集中，EXE 是有入口点(<a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/dotnet/api/system.reflection.assembly.entrypoint">EntryPoint</a>)属性的，那么我们可以将工程改为 EXE，并将文件后缀名改为 <code>.dll</code>。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Project</span> <span class="attr">Sdk</span>=<span class="string">&quot;Microsoft.NET.Sdk&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">PropertyGroup</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">OutputType</span>&gt;</span>WinExe<span class="tag">&lt;/<span class="name">OutputType</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">TargetExt</span>&gt;</span>.dll<span class="tag">&lt;/<span class="name">TargetExt</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">PropertyGroup</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">Project</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>在 EXE 的入口处调用 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/dotnet/api/system.appdomain.executeassembly">AppDomain.ExecuteAssembly</a> 方法进行 DLL 的初始化即可。</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AppDomain.CurrentDomain.ExecuteAssembly(<span class="string">&quot;MyDll&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<h2 id="模块初始化器"><a href="#模块初始化器" class="headerlink" title="模块初始化器"></a>模块初始化器</h2><p>从 .NET 5 开始，提供了 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/dotnet/api/system.runtime.compilerservices.moduleinitializerattribute">ModuleInitializerAttribute</a> 属性来标注模块的初始化方法。</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> System.Runtime.CompilerServices;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title">MyInitializer</span></span><br><span class="line">&#123;</span><br><span class="line">    [<span class="meta">ModuleInitializer</span>]</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Initialize</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 在加载模块时执行初始化操作</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样一来，无需显式调用初始化方法，初始化操作会在DLL被加载时自动执行。</p>
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/9577567/">Can a C# .dll assembly contain an entry point?</a><br><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/dotnet/csharp/language-reference/proposals/csharp-9.0/module-initializers">Module Initializers</a></p>
+
       </div>
-    
-      <div class="post-item" title="Directory.Build.targets 无法覆盖 OutputPath 属性">
-        <div class="time-m-d">2024-04-18</div>
-        <div class="title">
-          <a href="/2024/04/18/msbuild-outputpath/">
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
             
-              
-                <span>Directory.Build.targets 无法覆盖 OutputPath 属性</span>
-              
+              <a href="/2024/04/18/msbuild-outputpath/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
             
-          </a>
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2024-04-20 23:13:32
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/dotnet/" title=".NET">
+                        #.NET
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/2024/04/21/msbuild-project-sdk/" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
         </div>
-      </div>
+      
+    </div>
     
-      <div class="post-item" title=".NET 获取 EXE 所在目录的方法">
-        <div class="time-m-d">2024-04-15</div>
-        <div class="title">
-          <a href="/2024/04/15/net-get-exedir/">
-            
-              
-                <span>.NET 获取 EXE 所在目录的方法</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title=".NET 中的未处理异常">
-        <div class="time-m-d">2024-04-14</div>
-        <div class="title">
-          <a href="/2024/04/14/net-unhandledexception/">
-            
-              
-                <span>.NET 中的未处理异常</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="VC 运行时安装包">
-        <div class="time-m-d">2024-04-14</div>
-        <div class="title">
-          <a href="/2024/04/14/vc-redist/">
-            
-              
-                <span>VC 运行时安装包</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="WinDbg 配置调试服务器">
-        <div class="time-m-d">2024-04-11</div>
-        <div class="title">
-          <a href="/2024/04/11/windbg-remote/">
-            
-              
-                <span>WinDbg 配置调试服务器</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="WinDbg 配置符号路径">
-        <div class="time-m-d">2024-04-10</div>
-        <div class="title">
-          <a href="/2024/04/10/windbg-symbols/">
-            
-              
-                <span>WinDbg 配置符号路径</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="塞尔达传说：旷野之息数据整理">
-        <div class="time-m-d">2024-01-28</div>
-        <div class="title">
-          <a href="/2024/01/28/botw-hack/">
-            
-              
-                <span>塞尔达传说：旷野之息数据整理</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="旷野之息神庙全亮、传送作弊">
-        <div class="time-m-d">2024-01-24</div>
-        <div class="title">
-          <a href="/2024/01/24/zelda-botw-temples/">
-            
-              
-                <span>旷野之息神庙全亮、传送作弊</span>
-              
-            
-          </a>
-        </div>
-      </div>
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%9D%97%E5%88%9D%E5%A7%8B%E5%8C%96%E5%99%A8"><span class="toc-text">模块初始化器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="toc-text">相关阅读</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
     
   </div>
-  <nav class="post-navigation">
-    
-    <span class="page-num">1 / 9</span>
-    
-      <a href="/page/2/"><i class="iconfont icon-angleright"></i></a>
-    
-  </nav>
-</div>
+
 
         
 <div class="footer">
@@ -482,6 +482,24 @@
 
 
         
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + .NET%20DLL%20%E7%9A%84%E5%85%A5%E5%8F%A3%E7%82%B9 + '&url=' + https%3A%2F%2Fashe27.github.io%2F2024%2F04%2F20%2Fnet-dll-entrypoint%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://ashe27.github.io/2024/04/20/net-dll-entrypoint/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
   
   
 <script src="/js/shares.js"></script>
