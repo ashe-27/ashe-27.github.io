@@ -146,7 +146,7 @@
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2024-04-27 15:04:16
+          2024-04-28 15:40:24
         </span>
         
               <span class="post-tags">
@@ -498,9 +498,9 @@
 </tbody></table>
 <p><br>常用的一般就是进程、线程信息了。还有其他一些高级用法可以参考官方文档。<br>另外注意，某些变量需要依赖扩展包，否则不会生效。</p>
 <p><br>我个人喜欢的一个布局：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$&#123;longdate&#125;|$&#123;pad:padding=5:inner=$&#123;level:uppercase=true&#125;&#125;|$&#123;threadid&#125;|$&#123;logger&#125;| $&#123;message:withexception=true&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$&#123;longdate&#125; [$&#123;level:uppercase=true:padding=5&#125;] [$&#123;threadid&#125;] [$&#123;logger&#125;] $&#123;message&#125;</span><br></pre></td></tr></table></figure>
 <p>在默认的布局上对齐日志级别以及加入线程ID</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2024-04-27 15:03:14.0145|TRACE|1|WindowsFormsApp.Program| Hello</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2024-04-27 15:03:14.0145 [TRACE] [1] [WindowsFormsApp.Program] Hello</span><br></pre></td></tr></table></figure>
 
 <h2 id="Rules"><a href="#Rules" class="headerlink" title="Rules"></a>Rules</h2><p>rules 部分控制什么级别的日志输出到什么 target。一些例子：</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;utf-8&quot;</span> ?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">nlog</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">rules</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 匹配任何名称的记录器，Info 级及以上日志输出到 logfile --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">logger</span> <span class="attr">name</span>=<span class="string">&quot;*&quot;</span> <span class="attr">minlevel</span>=<span class="string">&quot;Info&quot;</span> <span class="attr">writeTo</span>=<span class="string">&quot;logfile&quot;</span> /&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- Trace 日志输出到 logfile --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">logger</span> <span class="attr">name</span>=<span class="string">&quot;*&quot;</span> <span class="attr">level</span>=<span class="string">&quot;Trace&quot;</span>  <span class="attr">writeTo</span>=<span class="string">&quot;logfile&quot;</span> /&gt;</span></span><br><span class="line">	</span><br><span class="line">    <span class="comment">&lt;!-- 禁用的记录器 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">logger</span> <span class="attr">name</span>=<span class="string">&quot;mylog&quot;</span> <span class="attr">levels</span>=<span class="string">&quot;Warn,Error&quot;</span> <span class="attr">enabled</span>=<span class="string">&quot;false&quot;</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">rules</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">nlog</span>&gt;</span></span><br></pre></td></tr></table></figure>
@@ -533,7 +533,7 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2024-04-27 15:04:16
+              2024-04-28 15:40:24
             </span>
             
                   <span class="post-tags">
@@ -555,6 +555,11 @@
               
           </div>
           <div class="post-foot-prev">
+            
+              <a href="/2024/05/13/windows-share-folder/" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
             
           </div>
         </div>
