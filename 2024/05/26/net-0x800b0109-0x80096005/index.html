@@ -8,10 +8,13 @@
   <meta name="author" content="John Doe" />
   <meta name="description" content="" />
   
-    <meta name="robots" content="noindex" />
-  
   
   <title>
+    
+      安装 .NET Framework 报 0x800B0109 错误的解决方法 
+      
+      
+      |
     
      ashe&#39;s blog
   </title>
@@ -94,151 +97,139 @@
 
 
       <div class="flex-container">
-        <div class="container index">
-  <div class="post-list">
-    <!-- 遍历渲染文章 -->
-    
-      <div class="post-item" title="Unity.Container 快速入门">
-        <div class="time-m-d">2023-10-15</div>
-        <div class="title">
-          <a href="/2023/10/15/unitycontainer/">
-            
-              
-                <span>Unity.Container 快速入门</span>
-              
-            
-          </a>
-        </div>
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">安装 .NET Framework 报 0x800B0109 错误的解决方法</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2024-05-26 23:06:36
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/NET/" title="NET">
+                    #NET
+                  </a>
+                </span>
+                
+              </span>
+          
       </div>
-    
-      <div class="post-item" title="Winforms 程序采用 MVP 的一点总结">
-        <div class="time-m-d">2023-10-14</div>
-        <div class="title">
-          <a href="/2023/10/14/winforms-mvp/">
-            
-              
-                <span>Winforms 程序采用 MVP 的一点总结</span>
-              
-            
-          </a>
-        </div>
+      <div class="markdown-body">
+        <p>在 Windows Thin PC 上安装 .NET Framework 4.8 时报错。</p>
+<h2 id="错误-0x800B0109"><a href="#错误-0x800B0109" class="headerlink" title="错误 0x800B0109"></a>错误 0x800B0109</h2><p>错误消息：已处理证书链，但是在不受信任提供程序信任的根证书中终止。</p>
+<p><img src="/images/net-0x800b0109-0x80096005/01.webp"></p>
+<p>看上去和数字证书有关。</p>
+<p><img src="/images/net-0x800b0109-0x80096005/02.webp"></p>
+<p>因为 Windows 7 SP1 (x86) 系统在未安装系统所需补丁的情况下不带此证书，而 Windows 7 SP1 (x64) 系统的最新版带有此证书。<br>网上找到解决方法说要将 <a target="_blank" rel="noopener" href="http://download.microsoft.com/download/2/4/8/248D8A62-FCCD-475C-85E7-6ED59520FC0F/MicrosoftRootCertificateAuthority2011.cer">MicrosoftRootCertificateAuthority2011.cer</a> 这个证书添加到<code>受信任的根证书颁发机构</code>中。</p>
+<h2 id="错误-0x80096005"><a href="#错误-0x80096005" class="headerlink" title="错误 0x80096005"></a>错误 0x80096005</h2><p>此时又出现新的错误：时间戳签名和&#x2F;或证书无法验证或已损坏。</p>
+<p><img src="/images/net-0x800b0109-0x80096005/03.webp"></p>
+<p>解决方法：安装 <a target="_blank" rel="noopener" href="http://support.microsoft.com/kb/KB2813430">KB2813430</a> 补丁。</p>
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><p><a target="_blank" rel="noopener" href="https://help.seewo.com/easinote/JBXIKMagzq">解决安装 .NET Framework 组件时会遇到的若干问题</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/richardfjf/article/details/108112229">安装net-framework4.8弹出“已处理证书链,但是在不受信任提供程序信任的根证书中终止”错误的解决方法</a></p>
+
       </div>
-    
-      <div class="post-item" title="WinForms 中使用 ReactiveUI">
-        <div class="time-m-d">2023-09-28</div>
-        <div class="title">
-          <a href="/2023/09/28/reactiveui-winforms/">
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
             
-              
-                <span>WinForms 中使用 ReactiveUI</span>
-              
+              <a href="/2024/05/25/windows-unattend/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
             
-          </a>
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2024-05-26 23:06:36
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/NET/" title="NET">
+                        #NET
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
         </div>
-      </div>
+      
+    </div>
     
-      <div class="post-item" title="C# 类的序列化">
-        <div class="time-m-d">2023-09-26</div>
-        <div class="title">
-          <a href="/2023/09/26/csharp-serialize/">
-            
-              
-                <span>C# 类的序列化</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="WinForms 数据绑定类型转换的两种方式">
-        <div class="time-m-d">2023-07-26</div>
-        <div class="title">
-          <a href="/2023/07/26/binding-formattingenabled/">
-            
-              
-                <span>WinForms 数据绑定类型转换的两种方式</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="C# 中两种配置文件机制">
-        <div class="time-m-d">2023-07-20</div>
-        <div class="title">
-          <a href="/2023/07/20/csharp-settings/">
-            
-              
-                <span>C# 中两种配置文件机制</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="修改 nuget 包输出位置">
-        <div class="time-m-d">2023-07-18</div>
-        <div class="title">
-          <a href="/2023/07/18/dotnet-probing/">
-            
-              
-                <span>修改 nuget 包输出位置</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Rust项目文件的组织方式">
-        <div class="time-m-d">2023-07-06</div>
-        <div class="title">
-          <a href="/2023/07/06/rust-workspace/">
-            
-              
-                <span>Rust项目文件的组织方式</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="C# 序列化对象到XML">
-        <div class="time-m-d">2023-07-05</div>
-        <div class="title">
-          <a href="/2023/07/05/XmlSerializer/">
-            
-              
-                <span>C# 序列化对象到XML</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Rust模块的使用">
-        <div class="time-m-d">2023-07-04</div>
-        <div class="title">
-          <a href="/2023/07/04/rust-mod/">
-            
-              
-                <span>Rust模块的使用</span>
-              
-            
-          </a>
-        </div>
-      </div>
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%94%99%E8%AF%AF-0x800B0109"><span class="toc-text">错误 0x800B0109</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%94%99%E8%AF%AF-0x80096005"><span class="toc-text">错误 0x80096005</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="toc-text">相关阅读</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
     
   </div>
-  <nav class="post-navigation">
-    
-      <a href="/page/3/"><i class="iconfont icon-angleleft"></i></a>
-    
-    <span class="page-num">4 / 9</span>
-    
-      <a href="/page/5/"><i class="iconfont icon-angleright"></i></a>
-    
-  </nav>
-</div>
+
 
         
 <div class="footer">
@@ -486,6 +477,24 @@
 
 
         
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E5%AE%89%E8%A3%85%20.NET%20Framework%20%E6%8A%A5%200x800B0109%20%E9%94%99%E8%AF%AF%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95 + '&url=' + https%3A%2F%2Fashe27.github.io%2F2024%2F05%2F26%2Fnet-0x800b0109-0x80096005%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://ashe27.github.io/2024/05/26/net-0x800b0109-0x80096005/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
   
   
 <script src="/js/shares.js"></script>
