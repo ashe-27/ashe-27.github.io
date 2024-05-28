@@ -8,10 +8,13 @@
   <meta name="author" content="John Doe" />
   <meta name="description" content="" />
   
-    <meta name="robots" content="noindex" />
-  
   
   <title>
+    
+      Windows 如何搜索设备驱动 
+      
+      
+      |
     
      ashe&#39;s blog
   </title>
@@ -94,151 +97,138 @@
 
 
       <div class="flex-container">
-        <div class="container index">
-  <div class="post-list">
-    <!-- 遍历渲染文章 -->
-    
-      <div class="post-item" title="gettext 使用方法">
-        <div class="time-m-d">2022-04-28</div>
-        <div class="title">
-          <a href="/2022/04/28/16205078/">
-            
-              
-                <span>gettext 使用方法</span>
-              
-            
-          </a>
-        </div>
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">Windows 如何搜索设备驱动</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2024-05-28 23:45:18
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Windows/" title="Windows">
+                    #Windows
+                  </a>
+                </span>
+                
+              </span>
+          
       </div>
-    
-      <div class="post-item" title="用 Boost.Locale 使软件支持多国语言">
-        <div class="time-m-d">2022-04-27</div>
-        <div class="title">
-          <a href="/2022/04/27/16200732/">
-            
-              
-                <span>用 Boost.Locale 使软件支持多国语言</span>
-              
-            
-          </a>
-        </div>
+      <div class="markdown-body">
+        <p>驱动由一个<code>.inf</code>文件和若干其他文件组成，搜索驱动的过程本质上就是查找<code>.inf</code>文件。然后通过文件中提供的信息查找二进制文件并进行注册安装。所以<code>.inf</code>文件就类似于一个安装脚本，包含着驱动的安装逻辑。</p>
+<p><br>每次更新驱动系统都会将驱动文件复制到 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/install/driver-store">驱动程序存储</a> 下，也就是<code>%SystemRoot%\System32\DriverStore\FileRepository</code>文件夹下。所以系统用久了后 DriverStore 目录会膨胀。</p>
+<p><br>Windows 会从注册表</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\DevicePath</span><br></pre></td></tr></table></figure>
+<p>所指向的目录下搜索驱动，这个值默认是<code>%SystemRoot%\inf</code>。也支持多个目录设置，每个目录之间用分号隔开。</p>
+<h2 id="工具、网站"><a href="#工具、网站" class="headerlink" title="工具、网站"></a>工具、网站</h2><p>几个驱动下载网站，支持用硬件ID搜索驱动，比如<code>VEN_15AD&amp;DEV_0740</code>。</p>
+<p><a target="_blank" rel="noopener" href="https://catalog.update.microsoft.com/">https://catalog.update.microsoft.com</a><br><a target="_blank" rel="noopener" href="https://driverslab.ru/">https://driverslab.ru</a><br><a target="_blank" rel="noopener" href="https://devicehunt.com/">https://devicehunt.com</a><br><a target="_blank" rel="noopener" href="https://deviceinbox.com/">https://deviceinbox.com</a><br><a target="_blank" rel="noopener" href="https://www.devicekb.com/">https://www.devicekb.com</a><br><a target="_blank" rel="noopener" href="https://download-drivers.net/">https://download-drivers.net</a></p>
+<p><br>软件：<br><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/devtest/pnputil">PnPUtil</a><br><a target="_blank" rel="noopener" href="https://github.com/lostindark/DriverStoreExplorer">Driver Store Explorer</a><br><a target="_blank" rel="noopener" href="https://www.nirsoft.net/utils/device_manager_view.html">DevManView</a></p>
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/install/how-windows-selects-a-driver-for-a-device">Windows 如何为设备选择驱动程序包</a><br><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/install/preloading-driver-packages">预加载驱动程序包</a><br><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/install/overview-of-device-and-driver-installation">设备安装概述</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/foohack/p/3437983.html">windows设备驱动安装指南</a></p>
+
       </div>
-    
-      <div class="post-item" title="Dear ImGui学习：使用 WantCaptureMouse 检查鼠标消息">
-        <div class="time-m-d">2022-04-23</div>
-        <div class="title">
-          <a href="/2022/04/23/16183345/">
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
             
-              
-                <span>Dear ImGui学习：使用 WantCaptureMouse 检查鼠标消息</span>
-              
+              <a href="/2024/05/26/net-0x800b0109-0x80096005/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
             
-          </a>
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2024-05-28 23:45:18
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Windows/" title="Windows">
+                        #Windows
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
         </div>
-      </div>
+      
+    </div>
     
-      <div class="post-item" title="VMware Workstation 下载地址">
-        <div class="time-m-d">2022-04-22</div>
-        <div class="title">
-          <a href="/2022/04/22/VMware-Workstation/">
-            
-              
-                <span>VMware Workstation 下载地址</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Visual Studio 下载地址">
-        <div class="time-m-d">2022-04-20</div>
-        <div class="title">
-          <a href="/2022/04/20/16170572/">
-            
-              
-                <span>Visual Studio 下载地址</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="在.NET 2.0中使用C#新特性">
-        <div class="time-m-d">2022-04-15</div>
-        <div class="title">
-          <a href="/2022/04/15/16151315/">
-            
-              
-                <span>在.NET 2.0中使用C#新特性</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="编译时检测.NET Framework框架版本">
-        <div class="time-m-d">2022-04-15</div>
-        <div class="title">
-          <a href="/2022/04/15/16150088/">
-            
-              
-                <span>编译时检测.NET Framework框架版本</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title=".NET Framework 安装包下载地址">
-        <div class="time-m-d">2022-04-07</div>
-        <div class="title">
-          <a href="/2022/04/07/netfx-installer/">
-            
-              
-                <span>.NET Framework 安装包下载地址</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="动态壁纸实现原理">
-        <div class="time-m-d">2021-09-25</div>
-        <div class="title">
-          <a href="/2021/09/25/RMrCXIzEz/">
-            
-              
-                <span>动态壁纸实现原理</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Windows 原版系统镜像">
-        <div class="time-m-d">2021-08-21</div>
-        <div class="title">
-          <a href="/2021/08/21/windows-iso/">
-            
-              
-                <span>Windows 原版系统镜像</span>
-              
-            
-          </a>
-        </div>
-      </div>
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%A5%E5%85%B7%E3%80%81%E7%BD%91%E7%AB%99"><span class="toc-text">工具、网站</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="toc-text">相关阅读</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
     
   </div>
-  <nav class="post-navigation">
-    
-      <a href="/page/7/"><i class="iconfont icon-angleleft"></i></a>
-    
-    <span class="page-num">8 / 10</span>
-    
-      <a href="/page/9/"><i class="iconfont icon-angleright"></i></a>
-    
-  </nav>
-</div>
+
 
         
 <div class="footer">
@@ -486,6 +476,24 @@
 
 
         
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Windows%20%E5%A6%82%E4%BD%95%E6%90%9C%E7%B4%A2%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8 + '&url=' + https%3A%2F%2Fashe27.github.io%2F2024%2F05%2F28%2Fwindows-drivers%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://ashe27.github.io/2024/05/28/windows-drivers/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
   
   
 <script src="/js/shares.js"></script>

@@ -146,7 +146,7 @@
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2024-05-26 23:23:37
+          2024-05-28 21:07:39
         </span>
         
               <span class="post-tags">
@@ -171,7 +171,11 @@
 <h2 id="错误-0x80096005"><a href="#错误-0x80096005" class="headerlink" title="错误 0x80096005"></a>错误 0x80096005</h2><p>此时又出现新的错误：时间戳签名和&#x2F;或证书无法验证或已损坏。</p>
 <p><img src="/images/net-0x800b0109-0x80096005/03.webp"></p>
 <p>解决方法：安装 <a target="_blank" rel="noopener" href="http://support.microsoft.com/kb/KB2813430">KB2813430</a> 补丁。</p>
-<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>有人说只用只用安装 <a target="_blank" rel="noopener" href="http://support.microsoft.com/kb/KB2813430">KB2813430</a> 补丁就能解决了，并不用导入证书。<br>我在一个优化了服务程序的系统上测试结果的确是这样。怀疑是禁用某个服务导致安装程序跳过证书验证了？<br>我也没有再深究了，正常的办法就是按照上面说的两步解决。</p>
+<h2 id="绕过-0x800B0109"><a href="#绕过-0x800B0109" class="headerlink" title="绕过 0x800B0109"></a>绕过 0x800B0109</h2><p>有人说只用只用安装 <a target="_blank" rel="noopener" href="http://support.microsoft.com/kb/KB2813430">KB2813430</a> 补丁就能解决了，并不用导入证书。<br>我在一个优化了服务程序的系统上测试结果的确是这样。怀疑是禁用某个服务导致安装程序跳过证书验证了。<br>经过反复试验后发现，同时禁用掉<code>Software Protection</code>和<code>DNS Client</code>服务的确可以顺利安装 .NET Framework 4.8。<br>禁用服务前：</p>
+<p><img src="/images/net-0x800b0109-0x80096005/04.webp"></p>
+<p>禁用服务后：</p>
+<p><img src="/images/net-0x800b0109-0x80096005/05.webp"></p>
+<p>虽然证书仍然显示异常，但是确实可以安装成功。至于背后的原理我也没有再深究了，也不建议这样绕过。<br>正常的办法就是按照前面说的两步解决：安装根证书和打补丁。</p>
 <h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><p><a target="_blank" rel="noopener" href="https://help.seewo.com/easinote/JBXIKMagzq">解决安装 .NET Framework 组件时会遇到的若干问题</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/richardfjf/article/details/108112229">安装net-framework4.8弹出“已处理证书链,但是在不受信任提供程序信任的根证书中终止”错误的解决方法</a></p>
 
       </div>
@@ -188,7 +192,7 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2024-05-26 23:23:37
+              2024-05-28 21:07:39
             </span>
             
                   <span class="post-tags">
@@ -205,6 +209,11 @@
           </div>
           <div class="post-foot-prev">
             
+              <a href="/2024/05/28/windows-drivers/" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -217,7 +226,7 @@
     <div class="title">目录</div>
     <div class="catalog-content">
       
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%94%99%E8%AF%AF-0x800B0109"><span class="toc-text">错误 0x800B0109</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%94%99%E8%AF%AF-0x80096005"><span class="toc-text">错误 0x80096005</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8E%E8%AE%B0"><span class="toc-text">后记</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="toc-text">相关阅读</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%94%99%E8%AF%AF-0x800B0109"><span class="toc-text">错误 0x800B0109</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%94%99%E8%AF%AF-0x80096005"><span class="toc-text">错误 0x80096005</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%95%E8%BF%87-0x800B0109"><span class="toc-text">绕过 0x800B0109</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="toc-text">相关阅读</span></a></li></ol>
       
     </div>
   </div>
