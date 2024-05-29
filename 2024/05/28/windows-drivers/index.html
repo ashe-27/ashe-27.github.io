@@ -146,7 +146,7 @@
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2024-05-29 23:25:08
+          2024-05-29 23:35:46
         </span>
         
               <span class="post-tags">
@@ -166,7 +166,7 @@
 <h2 id="搜索驱动"><a href="#搜索驱动" class="headerlink" title="搜索驱动"></a>搜索驱动</h2><p>当系统检测到新设备时会发生什么事呢？<br>首先 Windows 会从注册表</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\DevicePath</span><br></pre></td></tr></table></figure>
 <p>所指向的目录下遍历<code>.inf</code>文件，这个值默认是<code>%SystemRoot%\inf</code>。支持多个目录，每个目录之间用分号隔开。<br>匹配到驱动后会从 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/install/driver-store">DriverStore</a> 文件夹，也就是<code>%SystemRoot%\System32\DriverStore\FileRepository</code>下查找驱动文件并安装。</p>
-<p><br>如果是手动从其他目录安装的驱动，系统会将驱动文件复制到 DriverStore 文件夹下，所以这个目录会随着时间的推移而变大，因为其中包含着曾经使用过的所有驱动。</p>
+<p><br>如果是手动从其他目录安装的驱动，那么系统会将驱动文件复制到 DriverStore 文件夹下，以便下次使用。<br>所以这个目录会随着时间的推移而膨胀，因为其中包含着曾经使用过的所有驱动。</p>
 <h2 id="工具、网站"><a href="#工具、网站" class="headerlink" title="工具、网站"></a>工具、网站</h2><p>几个驱动下载网站，支持用硬件ID搜索驱动，比如<code>VEN_15AD&amp;DEV_0740</code>。</p>
 <p><a target="_blank" rel="noopener" href="https://catalog.update.microsoft.com/">https://catalog.update.microsoft.com</a><br><a target="_blank" rel="noopener" href="https://driverslab.ru/">https://driverslab.ru</a><br><a target="_blank" rel="noopener" href="https://devicehunt.com/">https://devicehunt.com</a><br><a target="_blank" rel="noopener" href="https://deviceinbox.com/">https://deviceinbox.com</a><br><a target="_blank" rel="noopener" href="https://www.devicekb.com/">https://www.devicekb.com</a><br><a target="_blank" rel="noopener" href="https://download-drivers.net/">https://download-drivers.net</a></p>
 <p><br>软件：<br><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/devtest/pnputil">PnPUtil</a><br><a target="_blank" rel="noopener" href="https://github.com/lostindark/DriverStoreExplorer">Driver Store Explorer</a><br><a target="_blank" rel="noopener" href="https://www.nirsoft.net/utils/device_manager_view.html">DevManView</a></p>
@@ -186,7 +186,7 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2024-05-29 23:25:08
+              2024-05-29 23:35:46
             </span>
             
                   <span class="post-tags">
