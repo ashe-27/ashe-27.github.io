@@ -146,7 +146,7 @@
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2024-05-13 22:00:06
+          2024-05-30 23:00:27
         </span>
         
               <span class="post-tags">
@@ -163,7 +163,7 @@
       </div>
       <div class="markdown-body">
         <p>每次在一个新系统上想开启共享时总是要进行这样那样的设置，很繁琐。要么就直接在网上找一键共享的批处理脚本或工具。<br>而大多数脚本或工具基本已经无法在 XP 系统上工作了。于是决定自己写一个。</p>
-<h2 id="开启防火墙规则"><a href="#开启防火墙规则" class="headerlink" title="开启防火墙规则"></a>开启防火墙规则</h2><p>新安装好系统时，防火墙默认是开启的，且没有启用<code>文件和打印机共享</code>规则。<br><img src="/images/windows-share-folder/01.webp"><br>在 XP 系统上可以用 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows/win32/api/netfw/nf-netfw-inetfwopenports-item">INetFwOpenPorts::Item</a> 方法检索 139 和 445 端口并启用它。<br>而此时会踩到第一个坑，因为这个方法本质上是访问注册表 <code>HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile\GloballyOpenPorts\List</code> 中的值，巧的是在新装好的系统上这个注册表键还不存在，这样就会导致调用 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows/win32/api/netfw/nf-netfw-inetfwopenports-item">INetFwOpenPorts::Item</a> 会返回 <code>HRESULT_FROM_WIN32 (ERROR_FILE_NOT_FOUND)</code> 错误。</p>
+<h2 id="开启防火墙规则"><a href="#开启防火墙规则" class="headerlink" title="开启防火墙规则"></a>开启防火墙规则</h2><p>新安装好系统时，防火墙默认是开启的，且没有启用<code>文件和打印机共享</code>规则。<br><img src="/images/windows-share-folder/01.webp"><br>在 XP 系统上可以用 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows/win32/api/netfw/nf-netfw-inetfwopenports-item">INetFwOpenPorts::Item</a> 方法检索 139 和 445 端口并启用它。<br>而此时会踩到第一个坑，因为这个方法本质上是访问注册表 <code>HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile\GloballyOpenPorts\List</code> 中的值，而在一个刚装好的新系统上这个注册表键还不存在，这样就会导致调用 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows/win32/api/netfw/nf-netfw-inetfwopenports-item">INetFwOpenPorts::Item</a> 会返回 <code>HRESULT_FROM_WIN32 (ERROR_FILE_NOT_FOUND)</code> 错误。</p>
 <p><br>所以正确做法是直接向注册表写入值：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile\GloballyOpenPorts\List]</span><br><span class="line">&quot;139:TCP&quot;=&quot;139:TCP:LocalSubNet:Enabled:@xpsp2res.dll,-22004&quot;</span><br><span class="line">&quot;445:TCP&quot;=&quot;445:TCP:LocalSubNet:Enabled:@xpsp2res.dll,-22005&quot;</span><br></pre></td></tr></table></figure>
 <p>立即生效，不用重启：<br><img src="/images/windows-share-folder/02.webp"></p>
@@ -171,6 +171,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">net user guest /active:yes</span><br><span class="line">net user guest &quot;&quot;</span><br></pre></td></tr></table></figure>
 <p>编程的话用 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows/win32/api/lmaccess/nf-lmaccess-netusersetinfo">NetUserSetInfo</a> 函数设置。</p>
 <h2 id="拒绝从网络访问这台计算机"><a href="#拒绝从网络访问这台计算机" class="headerlink" title="拒绝从网络访问这台计算机"></a>拒绝从网络访问这台计算机</h2><p><img src="/images/windows-share-folder/04.webp"><br>这是因为安全策略<code>拒绝从网络访问这台计算机</code>中默认包含了<code>Guest</code>用户，需要名单中移除。<br><img src="/images/windows-share-folder/05.webp"></p>
+<p>TODO:</p>
 
       </div>
       
@@ -186,7 +187,7 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2024-05-13 22:00:06
+              2024-05-30 23:00:27
             </span>
             
                   <span class="post-tags">
