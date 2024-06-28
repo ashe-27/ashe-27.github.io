@@ -8,10 +8,13 @@
   <meta name="author" content="John Doe" />
   <meta name="description" content="" />
   
-    <meta name="robots" content="noindex" />
-  
   
   <title>
+    
+      编译 Qt 5.7.1 
+      
+      
+      |
     
      ashe&#39;s blog
   </title>
@@ -94,151 +97,112 @@
 
 
       <div class="flex-container">
-        <div class="container index">
-  <div class="post-list">
-    <!-- 遍历渲染文章 -->
-    
-      <div class="post-item" title="用 IDA 调试 Switch 游戏">
-        <div class="time-m-d">2023-12-31</div>
-        <div class="title">
-          <a href="/2023/12/31/ns-ida-debug/">
-            
-              
-                <span>用 IDA 调试 Switch 游戏</span>
-              
-            
-          </a>
-        </div>
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">编译 Qt 5.7.1</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2024-06-29 00:11:44
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Qt/" title="Qt">
+                    #Qt
+                  </a>
+                </span>
+                
+              </span>
+          
       </div>
-    
-      <div class="post-item" title="常见的内存泄露方式">
-        <div class="time-m-d">2023-12-01</div>
-        <div class="title">
-          <a href="/2023/12/01/net-memory-leak/">
-            
-              
-                <span>常见的内存泄露方式</span>
-              
-            
-          </a>
-        </div>
+      <div class="markdown-body">
+        
       </div>
-    
-      <div class="post-item" title="await TaskYield 的意义">
-        <div class="time-m-d">2023-11-23</div>
-        <div class="title">
-          <a href="/2023/11/23/task-yield/">
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
             
-              
-                <span>await TaskYield 的意义</span>
-              
+              <a href="/2024/06/13/net-expose-components/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
             
-          </a>
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2024-06-29 00:11:44
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Qt/" title="Qt">
+                        #Qt
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
         </div>
-      </div>
+      
+    </div>
     
-      <div class="post-item" title="异步不是线程">
-        <div class="time-m-d">2023-11-22</div>
-        <div class="title">
-          <a href="/2023/11/22/async-not-thread/">
-            
-              
-                <span>异步不是线程</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="SDK style 工程文件介绍">
-        <div class="time-m-d">2023-11-17</div>
-        <div class="title">
-          <a href="/2023/11/17/csproj-sdkstyle/">
-            
-              
-                <span>SDK style 工程文件介绍</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Winforms 中工作线程更新界面的几种方式">
-        <div class="time-m-d">2023-11-15</div>
-        <div class="title">
-          <a href="/2023/11/15/multithreading-ui/">
-            
-              
-                <span>Winforms 中工作线程更新界面的几种方式</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Microsoft.Extensions.DependencyInjection 入门">
-        <div class="time-m-d">2023-11-11</div>
-        <div class="title">
-          <a href="/2023/11/11/Microsoft-Extensions-DependencyInjection/">
-            
-              
-                <span>Microsoft.Extensions.DependencyInjection 入门</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="ServiceLocator 模式">
-        <div class="time-m-d">2023-11-10</div>
-        <div class="title">
-          <a href="/2023/11/10/service-locator-pattern/">
-            
-              
-                <span>ServiceLocator 模式</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="XPath 常用语法">
-        <div class="time-m-d">2023-11-08</div>
-        <div class="title">
-          <a href="/2023/11/08/xpath-syntax/">
-            
-              
-                <span>XPath 常用语法</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="ScottPlot 查找离鼠标最近的点">
-        <div class="time-m-d">2023-11-05</div>
-        <div class="title">
-          <a href="/2023/11/05/scottplot-find-nearest-point/">
-            
-              
-                <span>ScottPlot 查找离鼠标最近的点</span>
-              
-            
-          </a>
-        </div>
-      </div>
+
     
   </div>
-  <nav class="post-navigation">
-    
-      <a href="/page/2/"><i class="iconfont icon-angleleft"></i></a>
-    
-    <span class="page-num">3 / 10</span>
-    
-      <a href="/page/4/"><i class="iconfont icon-angleright"></i></a>
-    
-  </nav>
-</div>
+
 
         
 <div class="footer">
@@ -486,6 +450,24 @@
 
 
         
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E7%BC%96%E8%AF%91%20Qt%205.7.1 + '&url=' + https%3A%2F%2Fashe27.github.io%2F2024%2F06%2F29%2Fbuild-qt-xp-5-7-1%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://ashe27.github.io/2024/06/29/build-qt-xp-5-7-1/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
   
   
 <script src="/js/shares.js"></script>
