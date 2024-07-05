@@ -11,8 +11,8 @@
   
   <title>
     
-      MFC 程序在英文系统上中文显示乱码问题 
-      
+      标签 
+       : Detours
       
       |
     
@@ -97,139 +97,30 @@
 
 
       <div class="flex-container">
-        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
-<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+        <!-- 标签详情页，展示某个标签下的文章列表，url形式：https://yoursite/tags/某个标签/ -->
 
-
-  <!-- LaTex Display -->
-
+<div class="container tag-details">
+  <div class="content-title">
+    <h2>
+      <span>Detours</span>
+    </h2>
+  </div>
   
-    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
-  
-  <script>
-    MathJax = {
-      tex: {
-        inlineMath: [['$', '$'], ['\\(', '\\)']]
-      }
-    }
-  </script>
-
-
-
-
-
-  <!-- clipboard -->
-
-  
-    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
-  
-  
-<script src="/js/codeCopy.js"></script>
-
-
-
-
-
-
-
-  
-
-  
-
-  
-
-  
-  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
-  <div class="container post-details" id="post-details">
-    <div class="post-content">
-      <div class="post-title">MFC 程序在英文系统上中文显示乱码问题</div>
-      <div class="post-attach">
-        <span class="post-pubtime">
-          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2024-07-04 21:40:04
-        </span>
-        
-              <span class="post-tags">
-                <i class="iconfont icon-tags mr-10" title="标签"></i>
-                
-                <span class="span--tag mr-8">
-                  <a href="/tags/MFC/" title="MFC">
-                    #MFC
-                  </a>
-                </span>
-                
-              </span>
-          
+    <div class="post-list">
+      <div class="post-item" title="解决 MFC 程序在英文系统上中文乱码问题">
+        <span class="time-m-d">2024-07-04</span>
+        <a href="/2024/07/04/mfc-garbled-characters/">
+          <span>解决 MFC 程序在英文系统上中文乱码问题</span>
+        </a>
       </div>
-      <div class="markdown-body">
-        <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>最近在项目中碰到中文乱码的问题，系统是英文的，安装了中文语言包。软件界面上原生的 Win32 控件能正常显示中文，但是菜单栏，状态栏，Tab等控件中的文字都是乱码。<br>排查后发现是因为项目使用了<code>多字节字符集</code>，恰巧程序又开启了<code>视觉样式</code>功能，这意味着一些带有外观样式的控件都是自绘的，而自绘用的 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/cpp/mfc/reference/cdc-class#drawtext">CDC::DrawText</a> 方法最终调用的 Win32 API 就是 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows/win32/api/winuser/nf-winuser-drawtexta">DrawTextA</a>，所以结果就是在绘制文本时将 GBK 编码的文本当作英文处理了，于是乱码就出现了。<br><br>最好的解决办法就是将程序修改为 Unicode 字符集，但是由于项目古老，已经没法动了。最终决定在绘制文本时手动调用 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows/win32/api/winuser/nf-winuser-drawtextw">DrawTextW</a>。</p>
-<h2 id="视觉样式"><a href="#视觉样式" class="headerlink" title="视觉样式"></a>视觉样式</h2><p>开启了视觉样式功能的项目。<br><img src="/images/CMFCVisualManager/01.webp"><br>查阅了一些资料后得知，带有外观的控件都是由 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/cpp/mfc/reference/cmfcvisualmanager-class">CMFCVisualManager</a> 这个类来绘制的。<br>这个类实现了单例，用 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/cpp/mfc/reference/cmfcvisualmanager-class#getinstance">CMFCVisualManager::GetInstance</a> 获取实例。<br>还有一个静态方法 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/cpp/mfc/reference/cmfcvisualmanager-class#setdefaultmanager">CMFCVisualManager::SetDefaultManager</a> 可以设置实例，这使得我们可以实现自己的样式类。</p>
-<p><br>MFC 自带的样式类。<br><img src="/images/CMFCVisualManager/02.png"></p>
-<h3 id="自定义样式"><a href="#自定义样式" class="headerlink" title="自定义样式"></a>自定义样式</h3><p>要实现自己的样式很简单，从<code>CMFCVisualManager</code>或任意子类继承，并覆盖以<code>OnDraw</code>开头的相关方法。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MyVisualManager</span> : CMFCVisualManager</span><br><span class="line">&#123;</span><br><span class="line">	<span class="built_in">DECLARE_DYNCREATE</span>(MyVisualManager)</span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">OnDrawTabContent</span><span class="params">(CDC* pDC, CRect rectTab, <span class="type">int</span> iTab, BOOL bIsActive, <span class="type">const</span> CMFCBaseTabCtrl* pTabWnd, COLORREF clrText)</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">	    <span class="comment">//<span class="doctag">TODO:</span> 自定义绘制代码</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>要改变应用外观样式时，只需要调用 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/cpp/mfc/reference/cmfcvisualmanager-class#setdefaultmanager">CMFCVisualManager::SetDefaultManager</a> 即可。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CMFCVisualManager::<span class="built_in">SetDefaultManager</span>(<span class="built_in">RUNTIME_CLASS</span>(MyVisualManager));</span><br></pre></td></tr></table></figure>
-
-<h2 id="解决乱码问题"><a href="#解决乱码问题" class="headerlink" title="解决乱码问题"></a>解决乱码问题</h2><p>对于我碰到的乱码起因，可以在绘制逻辑中将 CStringA 转换为 CStringW 再用 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows/win32/api/winuser/nf-winuser-drawtextw">DrawTextW</a> 去绘制。</p>
-<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/cpp/mfc/reference/cmfcvisualmanager-class">CMFCVisualManager 类</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/bigwasp/article/details/119106308">CMFCVisualManagerWindows10 自定义类</a></p>
-
-      </div>
-      
-        <div class="prev-or-next">
-          <div class="post-foot-next">
-            
-              <a href="/2024/06/29/build-qt-xp-5-7-1/" target="_self">
-                <i class="iconfont icon-chevronleft"></i>
-                <span>上一页</span>
-              </a>
-            
-          </div>
-          <div class="post-attach">
-            <span class="post-pubtime">
-              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2024-07-04 21:40:04
-            </span>
-            
-                  <span class="post-tags">
-                    <i class="iconfont icon-tags mr-10" title="标签"></i>
-                    
-                    <span class="span--tag mr-8">
-                      <a href="/tags/MFC/" title="MFC">
-                        #MFC
-                      </a>
-                    </span>
-                    
-                  </span>
-              
-          </div>
-          <div class="post-foot-prev">
-            
-          </div>
-        </div>
-      
     </div>
-    
-  <div id="btn-catalog" class="btn-catalog">
-    <i class="iconfont icon-catalog"></i>
-  </div>
-  <div class="post-catalog hidden" id="catalog">
-    <div class="title">目录</div>
-    <div class="catalog-content">
-      
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98"><span class="toc-text">问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%86%E8%A7%89%E6%A0%B7%E5%BC%8F"><span class="toc-text">视觉样式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E6%A0%B7%E5%BC%8F"><span class="toc-text">自定义样式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81%E9%97%AE%E9%A2%98"><span class="toc-text">解决乱码问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="toc-text">相关阅读</span></a></li></ol>
-      
-    </div>
-  </div>
-
   
-<script src="/js/catalog.js"></script>
-
-
-
-
+  <nav class="post-navigation">
     
-  </div>
-
+    <span class="page-num">1 / 1</span>
+    
+  </nav>
+</div>
 
         
 <div class="footer">
@@ -477,24 +368,6 @@
 
 
         
-  
-    <div class="share-icon tools-bar-item">
-      <a href="javascript: void(0)" id="share-icon">
-        <i class="iconfont iconshare"></i>
-      </a>
-      <div class="share-content hidden">
-        
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + MFC%20%E7%A8%8B%E5%BA%8F%E5%9C%A8%E8%8B%B1%E6%96%87%E7%B3%BB%E7%BB%9F%E4%B8%8A%E4%B8%AD%E6%96%87%E6%98%BE%E7%A4%BA%E4%B9%B1%E7%A0%81%E9%97%AE%E9%A2%98 + '&url=' + https%3A%2F%2Fashe27.github.io%2F2024%2F07%2F04%2FCMFCVisualManager%2F + '" target="_blank" title="Twitter">
-            <i class="iconfont icon-twitter"></i>
-          </a>
-        
-        
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://ashe27.github.io/2024/07/04/CMFCVisualManager/" target="_blank" title="Facebook">
-            <i class="iconfont icon-facebooksquare"></i>
-          </a>
-        
-      </div>
-    </div>
   
   
 <script src="/js/shares.js"></script>
