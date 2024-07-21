@@ -11,7 +11,7 @@
   
   <title>
     
-      Java 调用 C# DLL 的加载问题 
+      MSVC 编译器的字符编码设置 
       
       
       |
@@ -142,25 +142,25 @@
   <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
   <div class="container post-details" id="post-details">
     <div class="post-content">
-      <div class="post-title">Java 调用 C# DLL 的加载问题</div>
+      <div class="post-title">MSVC 编译器的字符编码设置</div>
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2024-07-17 23:27:37
+          2024-07-21 17:33:34
         </span>
         
               <span class="post-tags">
                 <i class="iconfont icon-tags mr-10" title="标签"></i>
                 
                 <span class="span--tag mr-8">
-                  <a href="/tags/dotnet/" title=".NET">
-                    #.NET
+                  <a href="/tags/c-plus-plus/" title="C++">
+                    #C++
                   </a>
                 </span>
                 
                 <span class="span--tag mr-8">
-                  <a href="/tags/Java/" title="Java">
-                    #Java
+                  <a href="/tags/MSVC/" title="MSVC">
+                    #MSVC
                   </a>
                 </span>
                 
@@ -168,35 +168,48 @@
           
       </div>
       <div class="markdown-body">
-        <h2 id="Java-调用托管-DLL-的方式"><a href="#Java-调用托管-DLL-的方式" class="headerlink" title="Java 调用托管 DLL 的方式"></a>Java 调用托管 DLL 的方式</h2><p>基本上就两种方式：</p>
+        <h2 id="字符集选项"><a href="#字符集选项" class="headerlink" title="字符集选项"></a>字符集选项</h2><p><img src="/images/source-charset-execution-charset/01.webp"><br>使用<code>Unicode</code>字符集后会在编译选项上附加<code>_UNICODE</code>和<code>UNICODE</code>这两个宏。</p>
+<ul>
+<li>带下划线的版本会影响 C 运行时头文件默认处理的字符集。因此，如果定义了<code>_UNICODE</code>，则<code>_tcslen</code>将映射到<code>wcslen</code>而不是<code>strlen</code>。</li>
+<li>不带下划线的普通版本会影响 Windows 头文件默认的字符集。因此，如果定义了<code>UNICODE</code>，则<code>GetWindowText</code>将映射到<code>GetWindowTextW</code>而不是 <code>GetWindowTextA</code>。</li>
+</ul>
+<p><br>当选择使用<code>多字节字符集</code>时，会在编译选项上附加<code>_MBCS</code>宏，不过这个宏可有可无，可能是因为历史原因一直保留着。因为在头文件中都是检测<code>_UNICODE</code>或<code>UNICODE</code>宏，而不是检测<code>_MBCS</code>。</p>
+<p><br>字符集选项与字符编码没有太大关系，它仅用于一些关于字符函数的映射关系。<br>今天，永远应该选择 Unicode 字符集，多字节字符集是过时的选项，常见于一些古老的程序。</p>
+<h2 id="source-charset-选项"><a href="#source-charset-选项" class="headerlink" title="&#x2F;source-charset 选项"></a>&#x2F;source-charset 选项</h2><p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/cpp/build/reference/source-charset-set-source-character-set">&#x2F;source-charset</a> 选项的作用是告诉编译器对于非<code>Unicode</code>编码的源文件使用什么编码方式读取文件。</p>
 <ol>
-<li>C# 开发 COM 组件，Java 调用。</li>
-<li>用 C++&#x2F;CLI 编写 DLL，暴露接口给 Java，内部再调用 C# DLL 的接口，起到桥接的作用。</li>
+<li>编译器会检测源文件编码是否为<code>Unicode</code>，比如<code>UTF-8</code>或<code>UTF-16</code>，如果是<code>Unicode</code>，则忽略<code>/source-charset</code>选项。</li>
+<li>如果源文件不是<code>Unicode</code>，则使用<code>/source-charset</code>指定的编码读取文件，如果未设置<code>/source-charset</code>，则使用<code>ANSI</code>编码。</li>
 </ol>
-<p><br>用 COM 组件的方式简单直接，只是不够便携，需要注册才可使用，注册后 DLL 不可移动文件位置，否则要重新注册，不过也算不上大问题。<br>用 C++&#x2F;CLI 方案就繁琐些，需要了解一点 C++&#x2F;CLI 语法。但是对于 Java 来说就像调用纯 C DLL 一样简单。</p>
-<h2 id="Java-加载托管-DLL-的问题"><a href="#Java-加载托管-DLL-的问题" class="headerlink" title="Java 加载托管 DLL 的问题"></a>Java 加载托管 DLL 的问题</h2><p>在实践 C++&#x2F;CLI 方案中，碰到一个让人在意的问题：托管 DLL 放在哪里才能被 Java 加载？<br>在开发 C++&#x2F;CLI 工程时，正常做法都会引用 C# 工程：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#using <span class="string">&quot;CSharp.dll&quot;</span></span></span><br></pre></td></tr></table></figure>
-<p>因为只有 using 后才能在代码中调用托管接口，但这产生了一个问题，C++ DLL 在被加载时会启动 CLR，而 CLR 只会从当前进程目录和 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/dotnet/framework/app-domains/gac">GAC</a> 中加载托管 DLL。如果主程序是 C++ 等程序倒不会有问题，因为 exe 和 dll 文件都在一个目录下，自然可以顺利加载。但是到了 Java 这里情况就不同了，比如应用目录是这样：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">app.jar</span><br><span class="line">Native.dll</span><br><span class="line">CSharp.dll</span><br></pre></td></tr></table></figure>
-<p>因为 Java 应用并不是传统的 exe 可执行文件，它最终是由<code>java.exe</code>作为宿主进程运行的，而<code>java.exe</code> 文件在<code>%JAVA_HOME%\bin</code>目录下，CLR 会从这里加载托管 DLL，这就逼迫我们必须将托管 DLL 放置在<code>%JAVA_HOME%\bin</code>目录下，很有侵入性。</p>
-<p><br>我想到有两种解决方案：</p>
-<ol>
-<li><p>在开发 C++&#x2F;CLI 工程时，不要强引用 C# DLL 工程，这样生成的 DLL 文件不会在初始化时去加载托管 DLL。然后在代码中动态加载托管 DLL，大概是这样：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">String^ currentDir = Path::<span class="built_in">GetDirectoryName</span>(Assembly::<span class="built_in">GetExecutingAssembly</span>()-&gt;Location);</span><br><span class="line">String^ dllPath = Path::<span class="built_in">Combine</span>(currentDir, <span class="string">&quot;CSharp.dll&quot;</span>);</span><br><span class="line">Assembly::<span class="built_in">LoadFrom</span>(dllPath);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 动态查找接口</span></span><br><span class="line"><span class="type">static</span> MethodInfo^ <span class="built_in">GetMethod</span>(String^ name)</span><br><span class="line">&#123;</span><br><span class="line">    Type^ type = lib-&gt;<span class="built_in">GetType</span>(<span class="string">&quot;mynamespae.Demo&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> type-&gt;<span class="built_in">GetMethod</span>(name);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这样做的缺点就是在开发时会痛苦，因为无法直接使用托管 DLL 的接口了，完全靠动态加载，显得比较繁琐。好处是能将 DLL 放在 jar 包同一个目录下。</p>
-</li>
-<li><p>将托管 DLL 打包到资源中，在加载 C++ DLL 之前先将托管 DLL 释放到<code>%JAVA_HOME%\bin</code>目录，然后再加载 C++ DLL 文件。不过这样会污染 Java 目录。</p>
-</li>
-</ol>
-<p><br>我个人推荐第一种方式，牺牲一点开发时的便捷性，提高环保性。</p>
-<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1597303">实现通过COM组件方式实现java调用C#写的DLL文件的完整demo</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/zhijian233/p/10752062.html">Java调用C#的DLL的坑</a><br><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/cpp/dotnet/dotnet-programming-with-cpp-cli-visual-cpp">使用 C++&#x2F;CLI 进行 .NET 编程</a></p>
+<p><br>如果源文件编码与<code>/source-charset</code>指定的编码不同，则可能出现 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/cpp/error-messages/compiler-warnings/compiler-warning-level-1-c4566">C4566</a> 警告，这会导致文字乱码。<br><img src="/images/source-charset-execution-charset/02.webp"></p>
+<p><br>在实践中，总是将源文件保存为<code>UTF-8</code>编码是不会错的。可 VS 总是默认将非<code>Unicode</code>源文件保存为<code>ANSI</code>编码，不过我们可以借助插件来强制保存为<code>UTF-8</code>：<br><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=WinstonFeng.FormatonSave">Format on Save</a><br><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=WinstonFeng.VSFormatOnSave2022">Format on Save for VS2022</a><br><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=qazwsxlty.forceutf8nobom2022">Force UTF-8 (No BOM) 2022</a><br><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=qazwsxlty.forceutf8withbom2022">Force UTF-8 (With BOM) 2022</a><br><a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=SergeyVlasov.FixFileEncoding">Fix File Encoding</a></p>
+<h2 id="execution-charset-选项"><a href="#execution-charset-选项" class="headerlink" title="&#x2F;execution-charset 选项"></a>&#x2F;execution-charset 选项</h2><p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/cpp/build/reference/execution-charset-set-execution-character-set">&#x2F;execution-charset</a> 选项的作用是告诉编译器在 PE 文件中用什么编码存储字符串。<br>比如代码：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">::<span class="built_in">MessageBoxA</span>(<span class="literal">nullptr</span>, <span class="string">&quot;1111哈哈&quot;</span>, <span class="string">&quot;&quot;</span>, <span class="number">64</span>);</span><br></pre></td></tr></table></figure>
+<p>用16进制工具查看 PE 文件，搜索相关字符<br><img src="/images/source-charset-execution-charset/03.webp"><br>其中<code>B9 FE B9 FE</code>正是<code>哈哈</code>的 GBK 编码。因为当不设置<code>/execution-charset</code>选项时，默认采用本机编码。<br>如果修改为<code>/execution-charset:utf-8</code>后：<br><img src="/images/source-charset-execution-charset/04.webp"><br>此时<code>哈哈</code>的16进制变为了<code>E5 9E 88 E5 9E 88</code>，这正是<code>UTF-8</code>编码。</p>
+<p><br>上面的例子出现乱码，因为我用的是中文系统，A 后缀版本的 API 函数会认为字符串是 GBK 编码，于是就乱码了，所以如果用了<code>/execution-charset:utf-8</code>选项后，又用的是 A 版函数，则要在传入字符串的地方先将编码转换为<code>Unicode</code>。</p>
+<h2 id="utf-8-选项"><a href="#utf-8-选项" class="headerlink" title="&#x2F;utf-8 选项"></a>&#x2F;utf-8 选项</h2><p>一句话：等同于设置了<code>/source-charset:utf8 /execution-charset:utf-8</code>。</p>
+<h2 id="UTF-8-版-Win32-API"><a href="#UTF-8-版-Win32-API" class="headerlink" title="UTF-8 版 Win32 API"></a>UTF-8 版 Win32 API</h2><p>因为历史原因，Win32 API 的 A 后缀版函数认为字符集都是<code>ANSI</code>，这导致在跨平台开发中，需要在调用系统 API 的地方先将<code>UTF-8</code>字符转换为<code>UTF-16</code>后再调用 W 后缀的函数，相当繁琐。</p>
+<p><br>为了让 A 后缀的系统函数支持<code>UTF-8</code>，微软在 Windows 10 1903 上开始支持在<code>manifest</code>文件中提供了一个<code>activeCodePage</code>属性。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span> standalone=<span class="string">&quot;yes&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">assembly</span> <span class="attr">manifestVersion</span>=<span class="string">&quot;1.0&quot;</span> <span class="attr">xmlns</span>=<span class="string">&quot;urn:schemas-microsoft-com:asm.v1&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">assemblyIdentity</span> <span class="attr">type</span>=<span class="string">&quot;win32&quot;</span> <span class="attr">name</span>=<span class="string">&quot;...&quot;</span> <span class="attr">version</span>=<span class="string">&quot;6.0.0.0&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">application</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">windowsSettings</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">activeCodePage</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://schemas.microsoft.com/SMI/2019/WindowsSettings&quot;</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">activeCodePage</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">windowsSettings</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">application</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">assembly</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>这样就能在调用 A 后缀系统函数的地方传入<code>UTF-8</code>字符串了。<br>注意，它仅在<code>Windows 10 1903</code>以上的系统上有效。并且根据官方文档描述，GDI 还不支持，还要修改系统设置，所以目前来看这个方案用起来还是那么丝滑。</p>
+<h2 id="UTF-8-和-UTF-8-BOM"><a href="#UTF-8-和-UTF-8-BOM" class="headerlink" title="UTF-8 和 UTF-8 BOM"></a>UTF-8 和 UTF-8 BOM</h2><p>带<code>BOM</code>签名的 UTF-8 常见于 Windows 平台，而在 Linux 生态中常见的是不带<code>BOM</code>的 UTF-8。</p>
+<ul>
+<li>带<code>BOM</code>：让软件更精准的识别而不是靠猜，但一些古老的软件可能不支持。</li>
+<li>不带<code>BOM</code>：对一些古老的软件兼容性好，特别是 Linux 平台，但是在 Windows 下一些软件可能要猜测编码。</li>
+</ul>
+<p><br>所以，选择哪种编码就是在兼容性与准确性之间的抉择。<br>不过，现如今各种工具软件基本都支持<code>UTF-8 BOM</code>了，所以可以优先考虑用<code>UTF-8 BOM</code>。</p>
+<h2 id="建议"><a href="#建议" class="headerlink" title="建议"></a>建议</h2><ul>
+<li>如果仅在 Windows 平台，源文件用<code>UTF-8 BOM</code>编码存储。字符串用宽字符，Win32 API 函数用 W 后缀的版本。</li>
+<li>如果仅在 Linux 平台，源文件用<code>UTF-8</code>编码存储。</li>
+<li>如果需要跨平台，源文件用<code>UTF-8 BOM</code>编码存储。字符串用窄字符，在使用 Win32 API（W后缀版本）函数的地方转换为宽字符。</li>
+</ul>
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/7953025/">Why both UNICODE and _UNICODE?</a><br><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows/win32/Intl/code-page-identifiers">代码页标识符</a><br><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows/apps/design/globalizing/use-utf8-code-page">在 Windows 应用中使用 UTF-8 代码页</a></p>
 
       </div>
       
         <div class="prev-or-next">
           <div class="post-foot-next">
             
-              <a href="/2024/07/07/build-boost/" target="_self">
+              <a href="/2024/07/17/java-net-dll/" target="_self">
                 <i class="iconfont icon-chevronleft"></i>
                 <span>上一页</span>
               </a>
@@ -205,21 +218,21 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2024-07-17 23:27:37
+              2024-07-21 17:33:34
             </span>
             
                   <span class="post-tags">
                     <i class="iconfont icon-tags mr-10" title="标签"></i>
                     
                     <span class="span--tag mr-8">
-                      <a href="/tags/dotnet/" title=".NET">
-                        #.NET
+                      <a href="/tags/c-plus-plus/" title="C++">
+                        #C++
                       </a>
                     </span>
                     
                     <span class="span--tag mr-8">
-                      <a href="/tags/Java/" title="Java">
-                        #Java
+                      <a href="/tags/MSVC/" title="MSVC">
+                        #MSVC
                       </a>
                     </span>
                     
@@ -227,11 +240,6 @@
               
           </div>
           <div class="post-foot-prev">
-            
-              <a href="/2024/07/18/source-charset-execution-charset/" target="_self">
-                <span>下一页</span>
-                <i class="iconfont icon-chevronright"></i>
-              </a>
             
           </div>
         </div>
@@ -245,7 +253,7 @@
     <div class="title">目录</div>
     <div class="catalog-content">
       
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Java-%E8%B0%83%E7%94%A8%E6%89%98%E7%AE%A1-DLL-%E7%9A%84%E6%96%B9%E5%BC%8F"><span class="toc-text">Java 调用托管 DLL 的方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Java-%E5%8A%A0%E8%BD%BD%E6%89%98%E7%AE%A1-DLL-%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-text">Java 加载托管 DLL 的问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="toc-text">相关阅读</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E9%9B%86%E9%80%89%E9%A1%B9"><span class="toc-text">字符集选项</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#source-charset-%E9%80%89%E9%A1%B9"><span class="toc-text">&#x2F;source-charset 选项</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#execution-charset-%E9%80%89%E9%A1%B9"><span class="toc-text">&#x2F;execution-charset 选项</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#utf-8-%E9%80%89%E9%A1%B9"><span class="toc-text">&#x2F;utf-8 选项</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UTF-8-%E7%89%88-Win32-API"><span class="toc-text">UTF-8 版 Win32 API</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UTF-8-%E5%92%8C-UTF-8-BOM"><span class="toc-text">UTF-8 和 UTF-8 BOM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BB%BA%E8%AE%AE"><span class="toc-text">建议</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="toc-text">相关阅读</span></a></li></ol>
       
     </div>
   </div>
@@ -513,12 +521,12 @@
       </a>
       <div class="share-content hidden">
         
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Java%20%E8%B0%83%E7%94%A8%20C%23%20DLL%20%E7%9A%84%E5%8A%A0%E8%BD%BD%E9%97%AE%E9%A2%98 + '&url=' + https%3A%2F%2Fashe27.github.io%2F2024%2F07%2F17%2Fjava-net-dll%2F + '" target="_blank" title="Twitter">
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + MSVC%20%E7%BC%96%E8%AF%91%E5%99%A8%E7%9A%84%E5%AD%97%E7%AC%A6%E7%BC%96%E7%A0%81%E8%AE%BE%E7%BD%AE + '&url=' + https%3A%2F%2Fashe27.github.io%2F2024%2F07%2F18%2Fsource-charset-execution-charset%2F + '" target="_blank" title="Twitter">
             <i class="iconfont icon-twitter"></i>
           </a>
         
         
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://ashe27.github.io/2024/07/17/java-net-dll/" target="_blank" title="Facebook">
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://ashe27.github.io/2024/07/18/source-charset-execution-charset/" target="_blank" title="Facebook">
             <i class="iconfont icon-facebooksquare"></i>
           </a>
         
