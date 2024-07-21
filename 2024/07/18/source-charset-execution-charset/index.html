@@ -146,7 +146,7 @@
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2024-07-21 17:33:34
+          2024-07-21 17:39:23
         </span>
         
               <span class="post-tags">
@@ -188,9 +188,9 @@
 <p><br>上面的例子出现乱码，因为我用的是中文系统，A 后缀版本的 API 函数会认为字符串是 GBK 编码，于是就乱码了，所以如果用了<code>/execution-charset:utf-8</code>选项后，又用的是 A 版函数，则要在传入字符串的地方先将编码转换为<code>Unicode</code>。</p>
 <h2 id="utf-8-选项"><a href="#utf-8-选项" class="headerlink" title="&#x2F;utf-8 选项"></a>&#x2F;utf-8 选项</h2><p>一句话：等同于设置了<code>/source-charset:utf8 /execution-charset:utf-8</code>。</p>
 <h2 id="UTF-8-版-Win32-API"><a href="#UTF-8-版-Win32-API" class="headerlink" title="UTF-8 版 Win32 API"></a>UTF-8 版 Win32 API</h2><p>因为历史原因，Win32 API 的 A 后缀版函数认为字符集都是<code>ANSI</code>，这导致在跨平台开发中，需要在调用系统 API 的地方先将<code>UTF-8</code>字符转换为<code>UTF-16</code>后再调用 W 后缀的函数，相当繁琐。</p>
-<p><br>为了让 A 后缀的系统函数支持<code>UTF-8</code>，微软在 Windows 10 1903 上开始支持在<code>manifest</code>文件中提供了一个<code>activeCodePage</code>属性。</p>
+<p><br>为了让 A 后缀的系统函数支持<code>UTF-8</code>，微软在 Windows 10 1903 上支持在<code>manifest</code>文件中提供<code>activeCodePage</code>属性。</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span> standalone=<span class="string">&quot;yes&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">assembly</span> <span class="attr">manifestVersion</span>=<span class="string">&quot;1.0&quot;</span> <span class="attr">xmlns</span>=<span class="string">&quot;urn:schemas-microsoft-com:asm.v1&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">assemblyIdentity</span> <span class="attr">type</span>=<span class="string">&quot;win32&quot;</span> <span class="attr">name</span>=<span class="string">&quot;...&quot;</span> <span class="attr">version</span>=<span class="string">&quot;6.0.0.0&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">application</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">windowsSettings</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">activeCodePage</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://schemas.microsoft.com/SMI/2019/WindowsSettings&quot;</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">activeCodePage</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">windowsSettings</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">application</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">assembly</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>这样就能在调用 A 后缀系统函数的地方传入<code>UTF-8</code>字符串了。<br>注意，它仅在<code>Windows 10 1903</code>以上的系统上有效。并且根据官方文档描述，GDI 还不支持，还要修改系统设置，所以目前来看这个方案用起来还是那么丝滑。</p>
+<p>这样就能在调用 A 后缀系统函数的地方传入<code>UTF-8</code>字符串了。<br>注意，它仅在<code>Windows 10 1903</code>以上的系统上有效。<br>不过根据官方文档描述，GDI 还不支持，还要修改系统设置，所以目前来看这个方案用起来还是那么丝滑。</p>
 <h2 id="UTF-8-和-UTF-8-BOM"><a href="#UTF-8-和-UTF-8-BOM" class="headerlink" title="UTF-8 和 UTF-8 BOM"></a>UTF-8 和 UTF-8 BOM</h2><p>带<code>BOM</code>签名的 UTF-8 常见于 Windows 平台，而在 Linux 生态中常见的是不带<code>BOM</code>的 UTF-8。</p>
 <ul>
 <li>带<code>BOM</code>：让软件更精准的识别而不是靠猜，但一些古老的软件可能不支持。</li>
@@ -218,7 +218,7 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2024-07-21 17:33:34
+              2024-07-21 17:39:23
             </span>
             
                   <span class="post-tags">
