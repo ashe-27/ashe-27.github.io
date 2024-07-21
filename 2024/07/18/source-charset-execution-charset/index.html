@@ -146,7 +146,7 @@
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2024-07-21 17:39:23
+          2024-07-21 17:40:35
         </span>
         
               <span class="post-tags">
@@ -199,7 +199,7 @@
 <p><br>所以，选择哪种编码就是在兼容性与准确性之间的抉择。<br>不过，现如今各种工具软件基本都支持<code>UTF-8 BOM</code>了，所以可以优先考虑用<code>UTF-8 BOM</code>。</p>
 <h2 id="建议"><a href="#建议" class="headerlink" title="建议"></a>建议</h2><ul>
 <li>如果仅在 Windows 平台，源文件用<code>UTF-8 BOM</code>编码存储。字符串用宽字符，Win32 API 函数用 W 后缀的版本。</li>
-<li>如果仅在 Linux 平台，源文件用<code>UTF-8</code>编码存储。</li>
+<li>如果仅在 Linux 平台，源文件用<code>UTF-8</code>编码存储。字符串用窄字符。</li>
 <li>如果需要跨平台，源文件用<code>UTF-8 BOM</code>编码存储。字符串用窄字符，在使用 Win32 API（W后缀版本）函数的地方转换为宽字符。</li>
 </ul>
 <h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/7953025/">Why both UNICODE and _UNICODE?</a><br><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows/win32/Intl/code-page-identifiers">代码页标识符</a><br><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows/apps/design/globalizing/use-utf8-code-page">在 Windows 应用中使用 UTF-8 代码页</a></p>
@@ -218,7 +218,7 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2024-07-21 17:39:23
+              2024-07-21 17:40:35
             </span>
             
                   <span class="post-tags">
