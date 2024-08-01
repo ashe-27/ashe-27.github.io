@@ -11,7 +11,7 @@
   
   <title>
     
-      安装 .NET Framework 后计算机停止响应 
+      CMake 构建 Qt 应用的若干问题 
       
       
       |
@@ -142,19 +142,25 @@
   <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
   <div class="container post-details" id="post-details">
     <div class="post-content">
-      <div class="post-title">安装 .NET Framework 后计算机停止响应</div>
+      <div class="post-title">CMake 构建 Qt 应用的若干问题</div>
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2024-07-31 22:57:14
+          2024-08-01 22:50:37
         </span>
         
               <span class="post-tags">
                 <i class="iconfont icon-tags mr-10" title="标签"></i>
                 
                 <span class="span--tag mr-8">
-                  <a href="/tags/dotnet/" title=".NET">
-                    #.NET
+                  <a href="/tags/Qt/" title="Qt">
+                    #Qt
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/CMake/" title="CMake">
+                    #CMake
                   </a>
                 </span>
                 
@@ -162,22 +168,25 @@
           
       </div>
       <div class="markdown-body">
-        <p>最近在一台嵌入式设备上安装 .NET Framewok 后发现整个系统非常卡，进入桌面后右下角的网络连接图标几分钟才能显示出来，但是十几二十分钟后就恢复正常了。<br>排查后发现是安装 .NET Framework 后会启动一个名为<code>.NET Runtime Optimization Service</code>的服务程序，它一直占用着 CPU，导致系统失去响应。<br>这个服务是干嘛的呢？这得先说下 .NET 程序是如何运行的。</p>
-<h2 id="NET-程序是如何运行的"><a href="#NET-程序是如何运行的" class="headerlink" title=".NET 程序是如何运行的"></a>.NET 程序是如何运行的</h2><p>当 .NET 编译器编译 C# 或 VB.NET 代码时，并不像 C++ 语言那样会生成本地代码（Native Code），而是生成了一种名为 <a target="_blank" rel="noopener" href="http://zh.wikipedia.org/wiki/Common_Intermediate_Language">CIL</a> 的代码，它并不被计算机识别，而是要待到启动时通过 JIT（Just-In-Time）将其翻译为本地代码。而本地代码特定于 JIT 编译器运行的计算机环境。</p>
-<p><br>所以 .NET 程序启动肯定是慢于 C&#x2F;C++ 这样的本地语言所开发出的程序的，因为每次启动时多了一个翻译的过程，而这个翻译的过程在一些低性能的 CPU 上特别耗时，这就导致了 .NET 程序冷启动很慢。</p>
-<h2 id="NGen-是什么"><a href="#NGen-是什么" class="headerlink" title="NGen 是什么"></a>NGen 是什么</h2><p>NGen（Native Image Generator）是 .NET Framework 中的一个工具（ngen.exe），用于将托管程序集编译成本地代码，以便在运行时直接执行本机代码，而不需要 JIT 编译。<br>NGen 的主要作用是减少应用程序的启动时间和提高性能。</p>
-<h2 id="计算机停止响应的原因"><a href="#计算机停止响应的原因" class="headerlink" title="计算机停止响应的原因"></a>计算机停止响应的原因</h2><p>前面说到的<code>.NET Runtime Optimization Service</code>服务程序，它主要负责在安装 .NET Framework 后对 .NET 程序集进行预编译，以提高应用程序的性能和启动速度。<br>预编译这个步骤的 CPU 占用在消费型 CPU 上都是无感的，毕竟性能足够，核心多。但是在一些用于嵌入式设备，性能极低的 CPU 上会非常明显，CPU 占用率 100%，导致整个系统失去响应。</p>
-<h2 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h2><p>解决办法就是敦促 ngen 赶紧完成预编译工作：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">NET2：%WINDIR%\Microsoft.NET\Framework\v2.0.50727\ngen.exe executeQueuedItems</span><br><span class="line">NET4：%WINDIR%\Microsoft.NET\Framework\v4.0.30319\ngen.exe executeQueuedItems</span><br></pre></td></tr></table></figure>
-<p><code>ngen executeQueuedItems</code>命令的作用是强制<code>.NET Runtime Optimization Service</code>立即执行队列中的所有待处理项。</p>
-<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/troubleshoot/developer/dotnet/framework/general/computer-stops-responding-mscorsvw">当 mscorsvw.exe 进程开始执行时，计算机停止响应</a><br><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/20620348">How and when does ngen.exe work?</a><br><a target="_blank" rel="noopener" href="http://zh.wikipedia.org/wiki/Common_Intermediate_Language">Common Intermediate Language</a><br><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/dotnet/framework/tools/ngen-exe-native-image-generator">Ngen.exe</a></p>
+        <h2 id="指定-Qt-路径"><a href="#指定-Qt-路径" class="headerlink" title="指定 Qt 路径"></a>指定 Qt 路径</h2><p>构建时要通过 <a target="_blank" rel="noopener" href="https://cmake.org/cmake/help/latest/variable/CMAKE_PREFIX_PATH.html">CMAKE_PREFIX_PATH</a> 指定 Qt 的安装路径，这样应用才能搜索到相关头文件，比如：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmake -DCMAKE_PREFIX_PATH=&quot;C:/Qt/Qt5.7.1-vc141-x64&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="将-qm-文件添加到-qrc-中"><a href="#将-qm-文件添加到-qrc-中" class="headerlink" title="将 .qm 文件添加到 .qrc 中"></a>将 .qm 文件添加到 .qrc 中</h2><p>在开发国际化应用程序时，我们可以将语言文件（.qm）放在磁盘上，也可以考虑放在资源文件中，这样可以避免文件被误删，或被用户胡搞。<br>资源文件内容可以这样写：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">RCC</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">qresource</span> <span class="attr">prefix</span>=<span class="string">&quot;/i18n&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">file</span>&gt;</span>zh_CN.qm<span class="tag">&lt;/<span class="name">file</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">file</span>&gt;</span>ja_JP.qm<span class="tag">&lt;/<span class="name">file</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">qresource</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">RCC</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>但这里有个问题，<code>.qm</code>文件是从<code>.ts</code>文件编译后才得到的，那么如何在编译后将其写入<code>.qrc</code>资源文件中呢？<br>这里得先说说 <a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qtlinguist-cmake-qt5-create-translation.html">qt5_create_translation</a> 函数，这个函数会调用<code>lupdate.exe</code>工具并生成<code>.qm</code>文件到构建目录下。<br>那么我们可以单独创建一个<code>i18n.qrc</code>文件作为模板，并复制到构建目录中，让它和<code>.qm</code>文件在同一个位置不就行了吗！</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 构建 .qm 文件</span></span><br><span class="line"><span class="keyword">file</span>(GLOB TS_FILES <span class="variable">$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;</span>/languages/*.ts)</span><br><span class="line">qt5_create_translation(_ <span class="variable">$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;</span>/src <span class="variable">$&#123;TS_FILES&#125;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 复制资源文件模板到构建目录下</span></span><br><span class="line"><span class="keyword">set</span>(i18n_qrc <span class="string">&quot;i18n.qrc&quot;</span>)</span><br><span class="line"><span class="keyword">file</span>(COPY <span class="variable">$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;</span>/<span class="variable">$&#123;i18n_qrc&#125;</span> DESTINATION <span class="variable">$&#123;CMAKE_CURRENT_BINARY_DIR&#125;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加资源文件</span></span><br><span class="line">qt5_add_resources(RESOURCE_FILES <span class="variable">$&#123;CMAKE_CURRENT_BINARY_DIR&#125;</span>/<span class="variable">$&#123;i18n_qrc&#125;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">target_sources</span>(demo PRIVATE <span class="variable">$&#123;RESOURCE_FILES&#125;</span>)</span><br></pre></td></tr></table></figure>
+<p>完美！</p>
+<h2 id="编辑-ui-文件后如何立即更新"><a href="#编辑-ui-文件后如何立即更新" class="headerlink" title="编辑 .ui 文件后如何立即更新"></a>编辑 .ui 文件后如何立即更新</h2><p>在 CMake 中有一个 <a target="_blank" rel="noopener" href="https://cmake.org/cmake/help/latest/variable/CMAKE_AUTOUIC.html">CMAKE_AUTOUIC</a> 变量，控制是否自动调用<code>uic.exe</code>来更新<code>ui_*.h</code>文件。<br>但问题在于 CMake 在编辑<code>.ui</code>文件后的第一次运行无法感知到头文件的变化（会显示旧的界面），必须要构建第二次才会 rebuild 相关的源文件，这样才能看到修改后的界面，至于为什么会这样我也不清楚。<br>研究了一番后发现用手动生成 UI 头文件可以解决这个问题，CMake 大概是这样：</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 关闭，不要自动 uic</span></span><br><span class="line"><span class="keyword">set</span>(CMAKE_AUTOUIC <span class="keyword">OFF</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">file</span>(GLOB UI_FILES src/*.ui)</span><br><span class="line">qt5_wrap_ui(UI_HEADERS <span class="variable">$&#123;UI_FILES&#125;</span>)</span><br><span class="line"><span class="keyword">target_include_directories</span>(demo PRIVATE $&lt;BUILD_INTERFACE:<span class="variable">$&#123;CMAKE_CURRENT_BINARY_DIR&#125;</span>&gt;)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 要将文件添加到源中，这样才会 rebuild</span></span><br><span class="line"><span class="keyword">target_sources</span>(demo PRIVATE <span class="variable">$&#123;UI_HEADERS&#125;</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>这里的关键就在 <a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qtwidgets-cmake-qt5-wrap-ui.html">qt5_wrap_ui</a> 函数，这是手动生成<code>ui_*.h</code>文件的方法。这种方式生成后可以立即引起 rebuild，这样启动程序后就是最新的界面。</p>
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/3125327">How to Integrate Qt4 qm files into binary using cmake and QRC?</a></p>
 
       </div>
       
         <div class="prev-or-next">
           <div class="post-foot-next">
             
-              <a href="/2024/07/18/source-charset-execution-charset/" target="_self">
+              <a href="/2024/07/31/ngen-mscorsvw/" target="_self">
                 <i class="iconfont icon-chevronleft"></i>
                 <span>上一页</span>
               </a>
@@ -186,15 +195,21 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2024-07-31 22:57:14
+              2024-08-01 22:50:37
             </span>
             
                   <span class="post-tags">
                     <i class="iconfont icon-tags mr-10" title="标签"></i>
                     
                     <span class="span--tag mr-8">
-                      <a href="/tags/dotnet/" title=".NET">
-                        #.NET
+                      <a href="/tags/Qt/" title="Qt">
+                        #Qt
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/CMake/" title="CMake">
+                        #CMake
                       </a>
                     </span>
                     
@@ -202,11 +217,6 @@
               
           </div>
           <div class="post-foot-prev">
-            
-              <a href="/2024/08/01/qt-clion/" target="_self">
-                <span>下一页</span>
-                <i class="iconfont icon-chevronright"></i>
-              </a>
             
           </div>
         </div>
@@ -220,7 +230,7 @@
     <div class="title">目录</div>
     <div class="catalog-content">
       
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#NET-%E7%A8%8B%E5%BA%8F%E6%98%AF%E5%A6%82%E4%BD%95%E8%BF%90%E8%A1%8C%E7%9A%84"><span class="toc-text">.NET 程序是如何运行的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NGen-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">NGen 是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%81%9C%E6%AD%A2%E5%93%8D%E5%BA%94%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="toc-text">计算机停止响应的原因</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95"><span class="toc-text">解决办法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="toc-text">相关阅读</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8C%87%E5%AE%9A-Qt-%E8%B7%AF%E5%BE%84"><span class="toc-text">指定 Qt 路径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%86-qm-%E6%96%87%E4%BB%B6%E6%B7%BB%E5%8A%A0%E5%88%B0-qrc-%E4%B8%AD"><span class="toc-text">将 .qm 文件添加到 .qrc 中</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E8%BE%91-ui-%E6%96%87%E4%BB%B6%E5%90%8E%E5%A6%82%E4%BD%95%E7%AB%8B%E5%8D%B3%E6%9B%B4%E6%96%B0"><span class="toc-text">编辑 .ui 文件后如何立即更新</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="toc-text">相关阅读</span></a></li></ol>
       
     </div>
   </div>
@@ -488,12 +498,12 @@
       </a>
       <div class="share-content hidden">
         
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E5%AE%89%E8%A3%85%20.NET%20Framework%20%E5%90%8E%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%81%9C%E6%AD%A2%E5%93%8D%E5%BA%94 + '&url=' + https%3A%2F%2Fashe27.github.io%2F2024%2F07%2F31%2Fngen-mscorsvw%2F + '" target="_blank" title="Twitter">
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + CMake%20%E6%9E%84%E5%BB%BA%20Qt%20%E5%BA%94%E7%94%A8%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98 + '&url=' + https%3A%2F%2Fashe27.github.io%2F2024%2F08%2F01%2Fqt-clion%2F + '" target="_blank" title="Twitter">
             <i class="iconfont icon-twitter"></i>
           </a>
         
         
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://ashe27.github.io/2024/07/31/ngen-mscorsvw/" target="_blank" title="Facebook">
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://ashe27.github.io/2024/08/01/qt-clion/" target="_blank" title="Facebook">
             <i class="iconfont icon-facebooksquare"></i>
           </a>
         
