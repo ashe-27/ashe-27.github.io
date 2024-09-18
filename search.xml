@@ -648,6 +648,8 @@
       
         <tags>
             
+            <tag> .NET </tag>
+            
             <tag> IoC </tag>
             
             <tag> 设计模式 </tag>
@@ -787,7 +789,11 @@
       
         <tags>
             
+            <tag> .NET </tag>
+            
             <tag> 设计模式 </tag>
+            
+            <tag> MVP </tag>
             
         </tags>
       
