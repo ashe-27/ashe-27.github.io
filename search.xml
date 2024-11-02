@@ -4,6 +4,25 @@
   
     
     <entry>
+      <title>排除 nuget 包中与平台无关的资源</title>
+      <link href="/2024/11/02/net-rid-nuget-assets/"/>
+      <url>/2024/11/02/net-rid-nuget-assets/</url>
+      
+        <content type="html"><![CDATA[<p>项目中引用了一个第三方包，在编译时输出目录下多了所有平台相关的动态库文件，导致占用了很多不必要的空间。而我只是需要 Windows 平台的资源而已。<br><img src="/images/net-rid-nuget-assets/01.webp"></p><h2 id="RuntimeIdentifier"><a href="#RuntimeIdentifier" class="headerlink" title="RuntimeIdentifier"></a>RuntimeIdentifier</h2><p>研究后发现 nuget 包会根据 <a href="https://learn.microsoft.com/en-us/dotnet/core/project-sdk/msbuild-props#runtimeidentifier">RuntimeIdentifier</a> 属性决定将哪些平台的资源拷贝到输出目录下。</p><p><br>但我们项目可能存在多种架构的支持，但这个属性却只能写一个<code>RID</code>，怎么办呢？动态地根据当前<code>Platform</code>去设置就好了：</p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">PropertyGroup</span> <span class="attr">Condition</span>=<span class="string">&quot;&#x27;$(RuntimeIdentifier)|$(Platform)&#x27; == &#x27;|AnyCPU&#x27;&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">RuntimeIdentifier</span>&gt;</span>win<span class="tag">&lt;/<span class="name">RuntimeIdentifier</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">PropertyGroup</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">PropertyGroup</span> <span class="attr">Condition</span>=<span class="string">&quot;&#x27;$(RuntimeIdentifier)|$(Platform)&#x27; == &#x27;|ARM64&#x27;&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">RuntimeIdentifier</span>&gt;</span>win-arm64<span class="tag">&lt;/<span class="name">RuntimeIdentifier</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">PropertyGroup</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">PropertyGroup</span> <span class="attr">Condition</span>=<span class="string">&quot;&#x27;$(RuntimeIdentifier)|$(Platform)&#x27; == &#x27;|x86&#x27;&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">RuntimeIdentifier</span>&gt;</span>win-x86<span class="tag">&lt;/<span class="name">RuntimeIdentifier</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">PropertyGroup</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">PropertyGroup</span> <span class="attr">Condition</span>=<span class="string">&quot;&#x27;$(RuntimeIdentifier)|$(Platform)&#x27; == &#x27;|x64&#x27;&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">RuntimeIdentifier</span>&gt;</span>win-x64<span class="tag">&lt;/<span class="name">RuntimeIdentifier</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">PropertyGroup</span>&gt;</span></span><br></pre></td></tr></table></figure><p>这里只简单考虑 Windows 系统，跨平台项目还要加入更多验证条件，可以参考末尾的文章。</p><h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><p><a href="https://learn.microsoft.com/en-us/dotnet/core/rid-catalog#using-rids">.NET RID Catalog</a><br><a href="https://stackoverflow.com/questions/43519690">.NET Core RuntimeIdentifier vs TargetFramework</a><br><a href="https://github.com/dotnet/runtime/blob/main/src/libraries/Microsoft.NETCore.Platforms/src/PortableRuntimeIdentifierGraph.json">PortableRuntimeIdentifierGraph.json</a></p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> .NET </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Boost.Asio 知识点</title>
       <link href="/2024/10/13/boost-asio/"/>
       <url>/2024/10/13/boost-asio/</url>
@@ -41,7 +60,7 @@
             
             <tag> GoogleTest </tag>
             
-            <tag> UnitTest </tag>
+            <tag> Unit Test </tag>
             
         </tags>
       
@@ -424,6 +443,8 @@
             
             <tag> .NET </tag>
             
+            <tag> WinForms </tag>
+            
         </tags>
       
     </entry>
@@ -502,9 +523,9 @@
       
         <tags>
             
-            <tag> 塞尔达传说 </tag>
-            
             <tag> Switch </tag>
+            
+            <tag> 塞尔达传说 </tag>
             
         </tags>
       
@@ -523,9 +544,9 @@
       
         <tags>
             
-            <tag> 塞尔达传说 </tag>
-            
             <tag> Switch </tag>
+            
+            <tag> 塞尔达传说 </tag>
             
         </tags>
       
@@ -680,6 +701,8 @@
         <tags>
             
             <tag> .NET </tag>
+            
+            <tag> WinForms </tag>
             
         </tags>
       
@@ -866,6 +889,8 @@
             
             <tag> MVP </tag>
             
+            <tag> WinForms </tag>
+            
         </tags>
       
     </entry>
@@ -883,7 +908,11 @@
       
         <tags>
             
+            <tag> .NET </tag>
+            
             <tag> ReactiveUI </tag>
+            
+            <tag> WinForms </tag>
             
         </tags>
       
@@ -922,6 +951,8 @@
         <tags>
             
             <tag> .NET </tag>
+            
+            <tag> WinForms </tag>
             
         </tags>
       
