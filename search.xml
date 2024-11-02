@@ -502,9 +502,9 @@
       
         <tags>
             
-            <tag> 软件调试 </tag>
-            
             <tag> WinDbg </tag>
+            
+            <tag> 软件调试 </tag>
             
         </tags>
       
@@ -885,11 +885,11 @@
             
             <tag> .NET </tag>
             
+            <tag> WinForms </tag>
+            
             <tag> 设计模式 </tag>
             
             <tag> MVP </tag>
-            
-            <tag> WinForms </tag>
             
         </tags>
       
@@ -910,9 +910,9 @@
             
             <tag> .NET </tag>
             
-            <tag> ReactiveUI </tag>
-            
             <tag> WinForms </tag>
+            
+            <tag> ReactiveUI </tag>
             
         </tags>
       
