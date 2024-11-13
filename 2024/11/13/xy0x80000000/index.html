@@ -8,10 +8,13 @@
   <meta name="author" content="John Doe" />
   <meta name="description" content="" />
   
-    <meta name="robots" content="noindex" />
-  
   
   <title>
+    
+      x - y &gt; 0x80000000u 是什么？ 
+      
+      
+      |
     
      ashe&#39;s blog
   </title>
@@ -94,151 +97,124 @@
 
 
       <div class="flex-container">
-        <div class="container index">
-  <div class="post-list">
-    <!-- 遍历渲染文章 -->
-    
-      <div class="post-item" title="Dear ImGui游戏窗口双光标问题">
-        <div class="time-m-d">2022-05-15</div>
-        <div class="title">
-          <a href="/2022/05/15/16273544/">
-            
-              
-                <span>Dear ImGui游戏窗口双光标问题</span>
-              
-            
-          </a>
-        </div>
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">x - y > 0x80000000u 是什么？</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2024-11-13 22:52:04
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/c-plus-plus/" title="C++">
+                    #C++
+                  </a>
+                </span>
+                
+              </span>
+          
       </div>
-    
-      <div class="post-item" title="Comctl32公共控件">
-        <div class="time-m-d">2022-05-10</div>
-        <div class="title">
-          <a href="/2022/05/10/16251848/">
-            
-              
-                <span>Comctl32公共控件</span>
-              
-            
-          </a>
-        </div>
+      <div class="markdown-body">
+        <p>今天看到一个函数，用于比较 X &lt; Y</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">isLess</span><span class="params">(<span class="type">unsigned</span> x, <span class="type">unsigned</span> y)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> x - y &gt; <span class="number">0x80000000</span>u;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>第一眼看到<code>0x80000000</code>，大概是和二进制补码有关，仔细一看，这个方法是为了在 Y 溢出后也能得到正确的比较结果。<br>程序是在处理一个序列号的问题，作者的意图是检查当前序列号小于新序列才能工作</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">unsigned</span> currentId = <span class="number">0xFFFFFFFF</span>;</span><br><span class="line"><span class="type">unsigned</span> nextId = <span class="number">0xFFFFFFFF</span>;</span><br><span class="line">nextId += <span class="number">1</span>;</span><br><span class="line"><span class="built_in">assert</span>(currentId &lt; nextId); <span class="comment">// 0xFFFFFFFF &lt; 0 ?</span></span><br></pre></td></tr></table></figure>
+<p>因为 nextId 回绕到零了，所以比较结果不正确。<br>但是这样就可以：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">unsigned</span> currentId = <span class="number">0xFFFFFFFF</span>;</span><br><span class="line"><span class="type">unsigned</span> nextId = <span class="number">0xFFFFFFFF</span>;</span><br><span class="line">nextId += <span class="number">1</span>;</span><br><span class="line"><span class="built_in">assert</span>(<span class="built_in">isLess</span>(currentId, nextId)); <span class="comment">// pass</span></span><br></pre></td></tr></table></figure>
+<p>但他这个函数有个问题，就是那个 0x80000000 的作用，因为函数参数都是无符号类型，那个 0x80000000 没有意义，比如考虑一个极端场景：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">unsigned</span> currentId = <span class="number">0xFFFFFFFF</span>;</span><br><span class="line"><span class="type">unsigned</span> nextId = <span class="number">0xFFFFFFFF</span>;</span><br><span class="line">nextId += <span class="number">0x80000000</span>u;</span><br><span class="line"><span class="built_in">assert</span>(<span class="built_in">isLess</span>(currentId, nextId)); <span class="comment">// failed</span></span><br></pre></td></tr></table></figure>
+<p>函数内就是：<code>0xFFFFFFFF - 0x(1)7FFFFFFF = 0x80000000 &lt; 0x80000000 = false</code><br>虽然在序列号递增这个场景下，99.99% 不会发生问题。<br>所以他这个函数实际效果就是这样的：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">isLess</span><span class="params">(<span class="type">unsigned</span> x, <span class="type">unsigned</span> y)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> x - y;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><br>解决方式非常简单，只要用一个比 uint32 范围更大的类型不就行了吗！</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">unsigned</span> currentId = <span class="number">0xFFFFFFFF</span>;</span><br><span class="line"><span class="type">unsigned</span> nextId = <span class="number">0xFFFFFFFF</span>;</span><br><span class="line"><span class="type">long</span> <span class="type">long</span> i64 = nextId;</span><br><span class="line">i64 += <span class="number">1</span>;</span><br><span class="line"><span class="built_in">assert</span>(currentId &lt; i64);</span><br></pre></td></tr></table></figure>
       </div>
-    
-      <div class="post-item" title="Dear ImGui学习：组件ID">
-        <div class="time-m-d">2022-05-08</div>
-        <div class="title">
-          <a href="/2022/05/08/16246612/">
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
             
-              
-                <span>Dear ImGui学习：组件ID</span>
-              
+              <a href="/2024/11/05/syncfusion-crack/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
             
-          </a>
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2024-11-13 22:52:04
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/c-plus-plus/" title="C++">
+                        #C++
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
         </div>
-      </div>
+      
+    </div>
     
-      <div class="post-item" title="MFC学习：设置窗口标题">
-        <div class="time-m-d">2022-05-07</div>
-        <div class="title">
-          <a href="/2022/05/07/16244353/">
-            
-              
-                <span>MFC学习：设置窗口标题</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="gettext 使用方法">
-        <div class="time-m-d">2022-04-28</div>
-        <div class="title">
-          <a href="/2022/04/28/16205078/">
-            
-              
-                <span>gettext 使用方法</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="用 Boost.Locale 使软件支持多国语言">
-        <div class="time-m-d">2022-04-27</div>
-        <div class="title">
-          <a href="/2022/04/27/16200732/">
-            
-              
-                <span>用 Boost.Locale 使软件支持多国语言</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Dear ImGui学习：使用 WantCaptureMouse 检查鼠标消息">
-        <div class="time-m-d">2022-04-23</div>
-        <div class="title">
-          <a href="/2022/04/23/16183345/">
-            
-              
-                <span>Dear ImGui学习：使用 WantCaptureMouse 检查鼠标消息</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="VMware Workstation 下载地址">
-        <div class="time-m-d">2022-04-22</div>
-        <div class="title">
-          <a href="/2022/04/22/VMware-Workstation/">
-            
-              
-                <span>VMware Workstation 下载地址</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Visual Studio 下载地址">
-        <div class="time-m-d">2022-04-20</div>
-        <div class="title">
-          <a href="/2022/04/20/visual-studio/">
-            
-              
-                <span>Visual Studio 下载地址</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="在.NET 2.0中使用C#新特性">
-        <div class="time-m-d">2022-04-15</div>
-        <div class="title">
-          <a href="/2022/04/15/16151315/">
-            
-              
-                <span>在.NET 2.0中使用C#新特性</span>
-              
-            
-          </a>
-        </div>
-      </div>
+
     
   </div>
-  <nav class="post-navigation">
-    
-      <a href="/page/8/"><i class="iconfont icon-angleleft"></i></a>
-    
-    <span class="page-num">9 / 11</span>
-    
-      <a href="/page/10/"><i class="iconfont icon-angleright"></i></a>
-    
-  </nav>
-</div>
+
 
         
 <div class="footer">
@@ -486,6 +462,24 @@
 
 
         
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + x%20-%20y%20%3E%200x80000000u%20%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F + '&url=' + https%3A%2F%2Fashe27.github.io%2F2024%2F11%2F13%2Fxy0x80000000%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://ashe27.github.io/2024/11/13/xy0x80000000/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
   
   
 <script src="/js/shares.js"></script>
