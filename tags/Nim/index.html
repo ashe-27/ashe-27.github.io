@@ -11,8 +11,8 @@
   
   <title>
     
-      WinINet的代理策略 
-      
+      标签 
+       : Nim
       
       |
     
@@ -97,148 +97,30 @@
 
 
       <div class="flex-container">
-        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
-<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+        <!-- 标签详情页，展示某个标签下的文章列表，url形式：https://yoursite/tags/某个标签/ -->
 
-
-  <!-- LaTex Display -->
-
+<div class="container tag-details">
+  <div class="content-title">
+    <h2>
+      <span>Nim</span>
+    </h2>
+  </div>
   
-    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
-  
-  <script>
-    MathJax = {
-      tex: {
-        inlineMath: [['$', '$'], ['\\(', '\\)']]
-      }
-    }
-  </script>
-
-
-
-
-
-  <!-- clipboard -->
-
-  
-    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
-  
-  
-<script src="/js/codeCopy.js"></script>
-
-
-
-
-
-
-
-  
-
-  
-
-  
-
-  
-  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
-  <div class="container post-details" id="post-details">
-    <div class="post-content">
-      <div class="post-title">WinINet的代理策略</div>
-      <div class="post-attach">
-        <span class="post-pubtime">
-          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2024-03-17 17:33:41
-        </span>
-        
-              <span class="post-tags">
-                <i class="iconfont icon-tags mr-10" title="标签"></i>
-                
-                <span class="span--tag mr-8">
-                  <a href="/tags/Windows%E7%BC%96%E7%A8%8B/" title="Windows编程">
-                    #Windows编程
-                  </a>
-                </span>
-                
-                <span class="span--tag mr-8">
-                  <a href="/tags/WinINet/" title="WinINet">
-                    #WinINet
-                  </a>
-                </span>
-                
-              </span>
-          
+    <div class="post-list">
+      <div class="post-item" title="Nim 开发 DLL 的注意事项">
+        <span class="time-m-d">2024-11-23</span>
+        <a href="/2024/11/23/nim-dll/">
+          <span>Nim 开发 DLL 的注意事项</span>
+        </a>
       </div>
-      <div class="markdown-body">
-        <h2 id="什么是系统代理"><a href="#什么是系统代理" class="headerlink" title="什么是系统代理"></a>什么是系统代理</h2><p>我们在网上冲浪时，无时无刻都在使用着基于HTTP协议的应用程序，使用最多的就是浏览器了。<br>面向开发者而言，微软提供了 <a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/wininet/about-wininet">WinINet</a> 和 <a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/winhttp/about-winhttp">WinHTTP</a> 两套网络API。<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/wininet/about-wininet">WinINet</a> 是 <a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/winhttp/about-winhttp">WinHTTP</a> 的超集。<br>我们在桌面上使用的应用程序几乎都是用的 <a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/wininet/about-wininet">WinINet</a>，而 <a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/winhttp/about-winhttp">WinHTTP</a> 通常用于一些无GUI的服务程序中。<br>关于 <a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/wininet/about-wininet">WinINet</a> 和 <a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/winhttp/about-winhttp">WinHTTP</a> 的差别可以查看官方手册 <a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/wininet/wininet-vs-winhttp">WinINet vs. WinHTTP</a>。<br>本文所讨论的是 <a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/wininet/about-wininet">WinINet</a> 的代理机制。</p>
-<h2 id="WinINet的代理策略"><a href="#WinINet的代理策略" class="headerlink" title="WinINet的代理策略"></a>WinINet的代理策略</h2><p>API函数 <a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/api/wininet/nf-wininet-internetopenw">InternetOpenW</a> 决定了程序如何使用代理，重点在第2个参数<code>AccessType</code>，解释如下：<br><code>INTERNET_OPEN_TYPE_DIRECT</code>：直连，不走代理。<br><code>INTERNET_OPEN_TYPE_PRECONFIG</code>：从注册表获取代理设置并使用。<br><code>INTERNET_OPEN_TYPE_PRECONFIG_WITH_NO_AUTOPROXY</code>：从注册表获取代理设置并使用，但不使用”自动配置”代理设置。<br><code>INTERNET_OPEN_TYPE_PROXY</code>：绕过注册表的代理设置，直连代理服务器，代理服务器由第3个参数指定。<br>第1个和第4个参数很好理解，说下第2个和第3个参数，WinINet的代理机制分两种，一种是<code>自动配置</code>，另一种是<code>代理服务器</code><br><img src="/images/1629336801688.png"><br><code>自动配置</code>基于 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%BB%A3%E7%90%86%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE">PAC</a> 技术来实现代理。而<code>代理服务器</code>则是比较传统的方式，通过指定地址和协议来代理的，虽然也可以指定黑名单IP禁止代理，但灵活性是不如 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%BB%A3%E7%90%86%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE">PAC</a> 代理技术的。<br>当程序使用<code>INTERNET_OPEN_TYPE_PRECONFIG</code>作为参数时，表示<strong>优先使用”自动配置”代理，否则使用”代理服务器”的设置</strong>。<br>而当程序使用<code>INTERNET_OPEN_TYPE_PRECONFIG_WITH_NO_AUTOPROXY</code>作为参数时，表示<strong>跳过”自动配置”代理，直接使用”代理服务器”的设置</strong>。<br>最常见的浏览器和绝大多数应用通常是使用<code>INTERNET_OPEN_TYPE_PRECONFIG</code>作为参数，用<code>INTERNET_OPEN_TYPE_PRECONFIG_WITH_NO_AUTOPROXY</code>的情况比较少见。</p>
-
-      </div>
-      
-        <div class="prev-or-next">
-          <div class="post-foot-next">
-            
-              <a href="/2021/08/18/Rn9thta4F/" target="_self">
-                <i class="iconfont icon-chevronleft"></i>
-                <span>上一页</span>
-              </a>
-            
-          </div>
-          <div class="post-attach">
-            <span class="post-pubtime">
-              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2024-03-17 17:33:41
-            </span>
-            
-                  <span class="post-tags">
-                    <i class="iconfont icon-tags mr-10" title="标签"></i>
-                    
-                    <span class="span--tag mr-8">
-                      <a href="/tags/Windows%E7%BC%96%E7%A8%8B/" title="Windows编程">
-                        #Windows编程
-                      </a>
-                    </span>
-                    
-                    <span class="span--tag mr-8">
-                      <a href="/tags/WinINet/" title="WinINet">
-                        #WinINet
-                      </a>
-                    </span>
-                    
-                  </span>
-              
-          </div>
-          <div class="post-foot-prev">
-            
-              <a href="/2021/08/20/18OY8R7kO/" target="_self">
-                <span>下一页</span>
-                <i class="iconfont icon-chevronright"></i>
-              </a>
-            
-          </div>
-        </div>
-      
     </div>
-    
-  <div id="btn-catalog" class="btn-catalog">
-    <i class="iconfont icon-catalog"></i>
-  </div>
-  <div class="post-catalog hidden" id="catalog">
-    <div class="title">目录</div>
-    <div class="catalog-content">
-      
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%B3%BB%E7%BB%9F%E4%BB%A3%E7%90%86"><span class="toc-text">什么是系统代理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#WinINet%E7%9A%84%E4%BB%A3%E7%90%86%E7%AD%96%E7%95%A5"><span class="toc-text">WinINet的代理策略</span></a></li></ol>
-      
-    </div>
-  </div>
-
   
-<script src="/js/catalog.js"></script>
-
-
-
-
+  <nav class="post-navigation">
     
-  </div>
-
+    <span class="page-num">1 / 1</span>
+    
+  </nav>
+</div>
 
         
 <div class="footer">
@@ -486,24 +368,6 @@
 
 
         
-  
-    <div class="share-icon tools-bar-item">
-      <a href="javascript: void(0)" id="share-icon">
-        <i class="iconfont iconshare"></i>
-      </a>
-      <div class="share-content hidden">
-        
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + WinINet%E7%9A%84%E4%BB%A3%E7%90%86%E7%AD%96%E7%95%A5 + '&url=' + https%3A%2F%2Fashe27.github.io%2F2021%2F08%2F19%2FWinINet-proxy%2F + '" target="_blank" title="Twitter">
-            <i class="iconfont icon-twitter"></i>
-          </a>
-        
-        
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://ashe27.github.io/2021/08/19/WinINet-proxy/" target="_blank" title="Facebook">
-            <i class="iconfont icon-facebooksquare"></i>
-          </a>
-        
-      </div>
-    </div>
   
   
 <script src="/js/shares.js"></script>
