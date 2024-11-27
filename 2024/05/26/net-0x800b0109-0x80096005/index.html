@@ -146,7 +146,7 @@
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2024-09-04 15:40:08
+          2024-11-26 20:09:36
         </span>
         
               <span class="post-tags">
@@ -176,6 +176,7 @@
 <p>禁用服务后：</p>
 <p><img src="/images/net-0x800b0109-0x80096005/05.webp"></p>
 <p>虽然证书仍然显示异常，但是确实可以安装成功。至于背后的原理我也没有再深究了，也不建议这样绕过。<br>正常的办法就是按照前面说的两步解决：安装根证书和打补丁。</p>
+<h2 id="直接从-msi-文件安装"><a href="#直接从-msi-文件安装" class="headerlink" title="直接从 .msi 文件安装"></a>直接从 .msi 文件安装</h2><p>后来我发现 .NET Framework 4.8 可以先提取出 .msi 文件再安装，这样就可以跳过前面的验证的步骤了。<br>运行<code>ndp48-x86-x64-allos-enu.exe /x</code>命令将安装文件提取到指定的目录，然后双击<code>netfx_full_x86.msi</code>或<code>netfx_full_x64.msi</code>就可以直接安装了。</p>
 <h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><p><a target="_blank" rel="noopener" href="https://help.seewo.com/easinote/JBXIKMagzq">解决安装 .NET Framework 组件时会遇到的若干问题</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/richardfjf/article/details/108112229">安装net-framework4.8弹出“已处理证书链,但是在不受信任提供程序信任的根证书中终止”错误的解决方法</a></p>
 
       </div>
@@ -192,7 +193,7 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2024-09-04 15:40:08
+              2024-11-26 20:09:36
             </span>
             
                   <span class="post-tags">
@@ -226,7 +227,7 @@
     <div class="title">目录</div>
     <div class="catalog-content">
       
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%94%99%E8%AF%AF-0x800B0109"><span class="toc-text">错误 0x800B0109</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%94%99%E8%AF%AF-0x80096005"><span class="toc-text">错误 0x80096005</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%95%E8%BF%87-0x800B0109"><span class="toc-text">绕过 0x800B0109</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="toc-text">相关阅读</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%94%99%E8%AF%AF-0x800B0109"><span class="toc-text">错误 0x800B0109</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%94%99%E8%AF%AF-0x80096005"><span class="toc-text">错误 0x80096005</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%95%E8%BF%87-0x800B0109"><span class="toc-text">绕过 0x800B0109</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E4%BB%8E-msi-%E6%96%87%E4%BB%B6%E5%AE%89%E8%A3%85"><span class="toc-text">直接从 .msi 文件安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="toc-text">相关阅读</span></a></li></ol>
       
     </div>
   </div>
