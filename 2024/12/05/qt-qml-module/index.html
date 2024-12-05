@@ -146,7 +146,7 @@
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2024-12-05 23:49:35
+          2024-12-05 23:55:20
         </span>
         
               <span class="post-tags">
@@ -197,7 +197,7 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">qmlplugindump -nonrelocatable MyControls 1.0 . &gt; plugin.qmltypes</span><br></pre></td></tr></table></figure>
 <p>这表示在当前目录下搜索<code>MyControls</code>模块的<code>1.0</code>版本，并生成元数据到<code>plugin.qmltypes</code>文件中。<br>然后在<code>qmldir</code>文件中加入一行：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">typeinfo plugin.qmltypes</span><br></pre></td></tr></table></figure>
-<p>这是标准做法，但是我发现 Qt 会自动查找目录下<code>.qmltypes</code>后缀的文件作为元数据，并不需要使用<code>typeinfo</code>去标注。<br>另外要注意的是，Debug 版的程序不能用来生成元数据。</p>
+<p>这是标准做法，但是我发现 QtCreator 会自动查找目录下<code>.qmltypes</code>后缀的文件作为元数据，并不需要使用<code>typeinfo</code>去标注。<br>另外要注意的是，Debug 版的程序不能用来生成元数据。</p>
 <p><br>最后，对于 cmake 项目，要在<code>CMakeLists.txt</code>中设置<code>QML_IMPORT_PATH</code>环境变量，告诉 IDE 去哪里查找模块元数据。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set(QML_IMPORT_PATH C:/app/bin/debug/qml/ CACHE STRING &quot;&quot; FORCE)</span><br></pre></td></tr></table></figure>
 
@@ -226,7 +226,7 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2024-12-05 23:49:35
+              2024-12-05 23:55:20
             </span>
             
                   <span class="post-tags">
