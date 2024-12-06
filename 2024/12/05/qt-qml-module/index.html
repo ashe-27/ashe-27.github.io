@@ -146,7 +146,7 @@
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2024-12-05 23:55:20
+          2024-12-06 08:38:38
         </span>
         
               <span class="post-tags">
@@ -202,15 +202,15 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set(QML_IMPORT_PATH C:/app/bin/debug/qml/ CACHE STRING &quot;&quot; FORCE)</span><br></pre></td></tr></table></figure>
 
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
-<li>开发 QML 插件，需要一个继承自 QQmlExtensionPlugin 的类，并在其中注册所有的模块。</li>
+<li>开发 QML 插件，需要一个继承自<a target="_blank" rel="noopener" href="https://doc.qt.io/qt-6/qqmlextensionplugin.html">QQmlExtensionPlugin</a>的类，并在其中注册所有的模块。</li>
 <li><code>import</code>后面的名称就是模块的名称。</li>
 <li>模块路径可以用 <a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qqmlengine.html#addImportPath">QQmlEngine::addImportPath</a> 添加。</li>
-<li>模块目录必须包含<code>qmldir</code>文件，至少提供<code>module</code>，对于动态库插件，需要提供<code>plugin</code>信息，指明动态库文件名（不含后缀）。</li>
-<li>对于纯 C++ 实现的 QML 控件，可以不用元数据文件<code>.qmltypes</code>，IDE 会有代码提示，但是对于纯 QML 控件则需要用·qmlplugindump·来生成元数据文件，否则 IDE 会发出警告。</li>
+<li>模块目录必须包含<code>qmldir</code>文件，文件内至少提供<code>module</code>属性，对于动态库插件，还需要提供<code>plugin</code>属性，用于指明动态库文件名（不含后缀）。</li>
+<li>对于纯 C++ 实现的 QML 控件，可以不用元数据文件<code>.qmltypes</code>，IDE 会有代码提示，但是对于纯 QML 控件则需要用<code>qmlplugindump.exe</code>来生成元数据文件，否则 IDE 会发出警告。</li>
 <li>元数据文件只是告诉 IDE 相关信息，提供代码提示等功能，在程序运行时是不需要的。</li>
 <li><code>qmldir</code>中的<code>typeinfo</code>属性可以省略，Qt 会自动查找<code>.qmltypes</code>后缀的文件作为元数据。</li>
 </ol>
-<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/cloud_castle/article/details/37043047">Qt5官方demo解析集20——Chapter 6: Writing an Extension Plugin</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/625057deaeac">Qt&#x2F;QML 插件系统</a><br><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qtqml-modules-topic.html">QML Modules</a><br><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qtqml-tutorials-extending-qml-example.html">Writing QML Extensions with C++</a></p>
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/cloud_castle/article/details/37043047">Qt5官方demo解析集20——Chapter 6: Writing an Extension Plugin</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/625057deaeac">Qt&#x2F;QML 插件系统</a><br><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qtqml-modules-topic.html">QML Modules</a><br><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qtqml-modules-qmldir.html">Module Definition qmldir Files</a><br><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qtqml-tutorials-extending-qml-example.html">Writing QML Extensions with C++</a></p>
 
       </div>
       
@@ -226,7 +226,7 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2024-12-05 23:55:20
+              2024-12-06 08:38:38
             </span>
             
                   <span class="post-tags">
