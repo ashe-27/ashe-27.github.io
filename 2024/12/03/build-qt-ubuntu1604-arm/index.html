@@ -146,7 +146,7 @@
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2024-12-04 21:03:59
+          2024-12-11 22:20:59
         </span>
         
               <span class="post-tags">
@@ -203,14 +203,14 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">QFontDatabase: Cannot find font directory /opt/Qt/5.7.1/lib/fonts.</span><br><span class="line">Note that Qt no longer ships fonts. Deploy some (from http://dejavu-fonts.org <span class="keyword">for</span> example) or switch to fontconfig.</span><br></pre></td></tr></table></figure>
 <p>看上去是和编译选项<code>-system-freetype</code>有关：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">   -no-freetype ........ Do not compile in Freetype2 support.</span><br><span class="line">   -qt-freetype ........ Use the libfreetype bundled with Qt.</span><br><span class="line">+  -system-freetype..... Use the libfreetype provided by the system (enabled if -fontconfig is active).</span><br><span class="line">                         See http://www.freetype.org</span><br></pre></td></tr></table></figure>
-<p>根据 <a target="_blank" rel="noopener" href="https://forum.qt.io/post/371130">https://forum.qt.io/post/371130</a> 这里的提示，设置<code>QT_QPA_FONTDIR</code>环境变量即可。</p>
+<p>这里有两种方式解决，一是重新编译 Qt，在编译前安装好<code>libfontconfig</code>库。二是修改环境变量<code>QT_QPA_FONTDIR</code>。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> QT_QPA_FONTDIR=/usr/share/fonts/truetype/dejavu</span><br></pre></td></tr></table></figure>
 <p>不过为了避免污染系统环境变量影响别的 Qt 程序，我选择了写在程序中：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifdef</span> Q_OS_LINUX</span></span><br><span class="line">    <span class="built_in">qputenv</span>(<span class="string">&quot;QT_QPA_FONTDIR&quot;</span>, <span class="string">&quot;/usr/share/fonts/truetype/dejavu&quot;</span>);</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
 
 <h2 id="软件渲染"><a href="#软件渲染" class="headerlink" title="软件渲染"></a>软件渲染</h2><p>再次运行，又报错：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">QXcbIntegration: Cannot create platform OpenGL context, neither GLX nor EGL are enabled</span><br><span class="line">Failed to create OpenGL context <span class="keyword">for</span> format QSurfaceFormat(version 2.0, options QFlags(), depthBufferSize 24, redBufferSize -1, greenBufferSize -1, blueBufferSize -1, alphaBufferSize -1, stencilBufferSize 8, samples -1, swapBehavior 2, swapInterval 1, profile  0) </span><br></pre></td></tr></table></figure>
-<p>这个倒好说，因为设备没有 GPU，所以 OpenGL 没法用，不得不改为软件渲染。<br>软件渲染需要编译安装 Qt Quick 2D Render 模块：<a target="_blank" rel="noopener" href="https://download.qt.io/new_archive/qt/5.7/5.7.1/submodules/qtdeclarative-render2d-opensource-src-5.7.1.7z">qtdeclarative-render2d-opensource-src-5.7.1.7z</a><br>为了使用软件渲染，也要设置环境变量：</p>
+<p>这个倒好说，因为设备没有 GPU 驱动，所以 OpenGL 没法用，不得不改为软件渲染。<br>软件渲染需要编译安装 Qt Quick 2D Render 模块：<a target="_blank" rel="noopener" href="https://download.qt.io/new_archive/qt/5.7/5.7.1/submodules/qtdeclarative-render2d-opensource-src-5.7.1.7z">qtdeclarative-render2d-opensource-src-5.7.1.7z</a><br>为了使用软件渲染，也要设置环境变量：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">qputenv</span>(<span class="string">&quot;QMLSCENE_DEVICE&quot;</span>, <span class="string">&quot;softwarecontext&quot;</span>);</span><br></pre></td></tr></table></figure>
 
 <h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><p><a target="_blank" rel="noopener" href="https://gitee.com/kayven/qt-builder">qt-builder 图形化QT源码编译工具</a><br><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/21488072">What is the use of various Qt platform plugins?</a><br><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/embedded-linux.html">Qt for Embedded Linux</a><br><a target="_blank" rel="noopener" href="https://doc.qt.io/QtQuick2DRenderer">QtQuick2DRenderer</a><br><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qtquickcontrols-index.html#versions">QuickControls Versions</a></p>
@@ -229,7 +229,7 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2024-12-04 21:03:59
+              2024-12-11 22:20:59
             </span>
             
                   <span class="post-tags">
