@@ -11,7 +11,7 @@
   
   <title>
     
-      Nim学习：创建 Object 
+      Nim学习：Object 
       
       
       |
@@ -142,11 +142,11 @@
   <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
   <div class="container post-details" id="post-details">
     <div class="post-content">
-      <div class="post-title">Nim学习：创建 Object</div>
+      <div class="post-title">Nim学习：Object</div>
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2024-12-12 23:00:27
+          2024-12-14 00:22:20
         </span>
         
               <span class="post-tags">
@@ -164,9 +164,9 @@
       <div class="markdown-body">
         <h2 id="定义对象类型"><a href="#定义对象类型" class="headerlink" title="定义对象类型"></a>定义对象类型</h2><p>定义对象类型有三种形式：</p>
 <ol>
-<li><code>object</code>。</li>
-<li><code>ref object</code>。</li>
-<li><code>ptr object</code>。</li>
+<li><code>object</code></li>
+<li><code>ref object</code></li>
+<li><code>ptr object</code></li>
 </ol>
 <h3 id="object"><a href="#object" class="headerlink" title="object"></a>object</h3><figure class="highlight nim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span></span><br><span class="line">  <span class="type">MyObj1</span> = <span class="keyword">object</span></span><br><span class="line">    age: <span class="type">int</span></span><br></pre></td></tr></table></figure>
 <p>本质上就是结构体，从生成的 C 代码中可看出来：</p>
@@ -180,7 +180,7 @@
 
 <h3 id="ref-object"><a href="#ref-object" class="headerlink" title="ref object"></a>ref object</h3><p>使用<code>ref</code>关键字定义对象总是在栈上分配：</p>
 <figure class="highlight nim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span></span><br><span class="line">  <span class="type">MyObj2</span> = <span class="keyword">ref</span> <span class="keyword">object</span></span><br><span class="line">    age: <span class="type">int</span></span><br><span class="line">    </span><br><span class="line"><span class="keyword">var</span> obj2: <span class="type">MyObj2</span></span><br><span class="line">obj2.age = <span class="number">5</span></span><br><span class="line">echo obj2.age</span><br></pre></td></tr></table></figure>
-<p>程序运行会报错：<code>SIGSEGV: Illegal storage access. (Attempt to read from nil?)</code>。<br>对应的 C 代码：</p>
+<p>程序运行会报错：<code>SIGSEGV: Illegal storage access. (Attempt to read from nil?)</code>。<br>看看对应的 C 代码：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">N_LIB_PRIVATE <span class="title function_">N_NIMCALL</span><span class="params">(<span class="type">void</span>, foo1__main_u9)</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">	tyObject_MyObj2colonObjectType___oLKZp5hB19b9cuVViusoCnEQ* obj2;</span><br><span class="line">	obj2 = NIM_NIL;</span><br><span class="line">	(*obj2).age = ((NI)<span class="number">5</span>);</span><br><span class="line">	nimln_(<span class="number">14</span>);	colontmpD_ = dollar___systemZdollars_u8((*obj2).age);</span><br><span class="line">	eqdestroy___main_u14(obj2);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>错误原因就是访问空指针了，<strong>所以<code>ref object</code>必须用<code>new</code>关键字分配，同时它会被 GC 回收。</strong></p>
 <h3 id="ptr-object"><a href="#ptr-object" class="headerlink" title="ptr object"></a>ptr object</h3><p><code>ptr object</code>和<code>ref object</code>一样都是指针类型，但<code>ptr object</code>不会被 GC 回收，需要手动管理生命周期：</p>
@@ -235,12 +235,14 @@
 </tr>
 </tbody></table>
 <p><br>另外，在定义类型是用<code>ref</code>或<code>ptr</code>是有意义的，这可以强制要求对象在堆上分配，比如在与 C 交互时，对象的生命周期由用户控制。</p>
-<h2 id="RootObj"><a href="#RootObj" class="headerlink" title="RootObj"></a>RootObj</h2><p>TODO:</p>
+<h2 id="RootObj"><a href="#RootObj" class="headerlink" title="RootObj"></a>RootObj</h2><p><a target="_blank" rel="noopener" href="https://nim-lang.org/docs/system.html#RootObj">RootObj</a> 是什么？简单一句话就是：当你要实现类的多态性时就要从它继承。</p>
+<figure class="highlight nim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span></span><br><span class="line">  <span class="type">Animal</span> = <span class="keyword">object</span> <span class="keyword">of</span> <span class="type">RootObj</span></span><br><span class="line">  <span class="type">Dog</span> = <span class="keyword">object</span> <span class="keyword">of</span> <span class="type">Animal</span></span><br><span class="line">  <span class="type">Cat</span> = <span class="keyword">object</span> <span class="keyword">of</span> <span class="type">Animal</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">method</span> vocalize(self: <span class="type">Animal</span>): <span class="type">string</span> <span class="meta">&#123;.base.&#125;</span> = <span class="string">&quot;...&quot;</span></span><br><span class="line"><span class="keyword">method</span> vocalize(self: <span class="type">Dog</span>): <span class="type">string</span> = <span class="string">&quot;Woof!&quot;</span></span><br><span class="line"><span class="keyword">method</span> vocalize(self: <span class="type">Cat</span>): <span class="type">string</span> = <span class="string">&quot;Meow!&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span></span><br><span class="line">  animal = <span class="type">Animal</span>()</span><br><span class="line">  dog = <span class="type">Dog</span>()</span><br><span class="line">  cat = <span class="type">Cat</span>()</span><br><span class="line"></span><br><span class="line">echo animal.vocalize() <span class="comment"># 输出: &quot;...&quot;</span></span><br><span class="line">echo dog.vocalize()    <span class="comment"># 输出: &quot;Woof!&quot;</span></span><br><span class="line">echo cat.vocalize()    <span class="comment"># 输出: &quot;Meow!&quot;</span></span><br></pre></td></tr></table></figure>
+
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
 <li><code>ref object</code>类型是自动管理生命周期的。</li>
 <li><code>ptr object</code>类型需要手动管理生命周期，典型使用场景是和 C 交互的时候。</li>
 </ol>
-<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><p><a target="_blank" rel="noopener" href="https://nim-by-example.github.io/oop/">Object Oriented Programming</a></p>
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><p><a target="_blank" rel="noopener" href="https://nim-lang.org/docs/tut2.html">Nim Tutorial (Part II)</a><br><a target="_blank" rel="noopener" href="https://nim-by-example.github.io/oop/">Object Oriented Programming</a><br><a target="_blank" rel="noopener" href="https://forum.nim-lang.org/t/5681">Why inherit RootObj?</a></p>
 
       </div>
       
@@ -256,7 +258,7 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2024-12-12 23:00:27
+              2024-12-14 00:22:20
             </span>
             
                   <span class="post-tags">
@@ -553,7 +555,7 @@
       </a>
       <div class="share-content hidden">
         
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Nim%E5%AD%A6%E4%B9%A0%EF%BC%9A%E5%88%9B%E5%BB%BA%20Object + '&url=' + https%3A%2F%2Fashe27.github.io%2F2024%2F12%2F12%2Fnim-ref-object%2F + '" target="_blank" title="Twitter">
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Nim%E5%AD%A6%E4%B9%A0%EF%BC%9AObject + '&url=' + https%3A%2F%2Fashe27.github.io%2F2024%2F12%2F12%2Fnim-ref-object%2F + '" target="_blank" title="Twitter">
             <i class="iconfont icon-twitter"></i>
           </a>
         
