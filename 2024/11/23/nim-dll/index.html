@@ -146,7 +146,7 @@
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2024-11-24 13:21:36
+          2024-12-14 15:32:24
         </span>
         
               <span class="post-tags">
@@ -186,7 +186,7 @@
 <p>当然，如果模块之间使用的是 C ABI，那么就不需要引入<code>nimrtl</code>。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
 <li>动态库强制导出<code>NimMain</code>和<code>NimDestroyGlobals</code>函数，用于初始化 GC 和释放资源。</li>
-<li><code>--noMain</code>编译选项禁止生成<code>DllMain</code>方法，这样就避免自动执行<code>NimMain</code>函数。</li>
+<li><code>--noMain</code>编译选项禁止生成<code>DllMain</code>方法，这样就能禁止 Nim 自动执行<code>NimMain</code>函数。</li>
 <li><code>--nimMainPrefix</code>编译选项为<code>NimMain</code>函数名称添加前缀。</li>
 <li>当项目中包含多个 Nim 模块时且存在类型依赖时，建议使用<code>-d:useNimRtl</code>编译选项来使用<code>nimrtl.dll</code>中的 GC 实例。</li>
 </ul>
@@ -206,7 +206,7 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2024-11-24 13:21:36
+              2024-12-14 15:32:24
             </span>
             
                   <span class="post-tags">

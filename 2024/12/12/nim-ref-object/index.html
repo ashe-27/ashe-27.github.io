@@ -146,7 +146,7 @@
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2024-12-14 00:22:20
+          2024-12-17 21:36:28
         </span>
         
               <span class="post-tags">
@@ -238,10 +238,15 @@
 <h2 id="RootObj"><a href="#RootObj" class="headerlink" title="RootObj"></a>RootObj</h2><p><a target="_blank" rel="noopener" href="https://nim-lang.org/docs/system.html#RootObj">RootObj</a> 是什么？简单一句话就是：当你要实现类的多态性时就要从它继承。</p>
 <figure class="highlight nim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span></span><br><span class="line">  <span class="type">Animal</span> = <span class="keyword">object</span> <span class="keyword">of</span> <span class="type">RootObj</span></span><br><span class="line">  <span class="type">Dog</span> = <span class="keyword">object</span> <span class="keyword">of</span> <span class="type">Animal</span></span><br><span class="line">  <span class="type">Cat</span> = <span class="keyword">object</span> <span class="keyword">of</span> <span class="type">Animal</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">method</span> vocalize(self: <span class="type">Animal</span>): <span class="type">string</span> <span class="meta">&#123;.base.&#125;</span> = <span class="string">&quot;...&quot;</span></span><br><span class="line"><span class="keyword">method</span> vocalize(self: <span class="type">Dog</span>): <span class="type">string</span> = <span class="string">&quot;Woof!&quot;</span></span><br><span class="line"><span class="keyword">method</span> vocalize(self: <span class="type">Cat</span>): <span class="type">string</span> = <span class="string">&quot;Meow!&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span></span><br><span class="line">  animal = <span class="type">Animal</span>()</span><br><span class="line">  dog = <span class="type">Dog</span>()</span><br><span class="line">  cat = <span class="type">Cat</span>()</span><br><span class="line"></span><br><span class="line">echo animal.vocalize() <span class="comment"># 输出: &quot;...&quot;</span></span><br><span class="line">echo dog.vocalize()    <span class="comment"># 输出: &quot;Woof!&quot;</span></span><br><span class="line">echo cat.vocalize()    <span class="comment"># 输出: &quot;Meow!&quot;</span></span><br></pre></td></tr></table></figure>
 
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
-<li><code>ref object</code>类型是自动管理生命周期的。</li>
-<li><code>ptr object</code>类型需要手动管理生命周期，典型使用场景是和 C 交互的时候。</li>
-</ol>
+<h2 id="函数参数类型"><a href="#函数参数类型" class="headerlink" title="函数参数类型"></a>函数参数类型</h2><p>看例子：</p>
+<figure class="highlight nim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span></span><br><span class="line">  <span class="type">MyObj1</span> = <span class="keyword">object</span></span><br><span class="line">    age: <span class="type">int</span></span><br><span class="line"></span><br><span class="line">  <span class="type">MyObj2</span> = <span class="keyword">ref</span> <span class="keyword">object</span></span><br><span class="line">    age: <span class="type">int</span></span><br><span class="line"></span><br><span class="line">  <span class="type">MyObj3</span> = <span class="keyword">object</span></span><br><span class="line">    age: <span class="type">int</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">proc</span> foo1(obj: <span class="keyword">var</span> <span class="type">MyObj1</span>) =</span><br><span class="line">  obj.age = <span class="number">10</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">proc</span> foo2(obj: <span class="type">MyObj2</span>) =</span><br><span class="line">  obj.age = <span class="number">20</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">proc</span> foo3(obj: <span class="keyword">ptr</span> <span class="type">MyObj3</span>) =</span><br><span class="line">  obj.age = <span class="number">30</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> x1 = <span class="type">MyObj1</span>(age: <span class="number">1</span>)</span><br><span class="line">foo1(x1)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> x2 = new(<span class="type">MyObj2</span>)</span><br><span class="line">foo2(x2)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> x3 = create(<span class="type">MyObj3</span>)</span><br><span class="line">foo3(x3)</span><br><span class="line">dealloc(x3)</span><br></pre></td></tr></table></figure>
+<p>从这段代码得到的知识点：</p>
+<ul>
+<li>如果参数是值类型，默认不可修改成员变量。要修改的化需要用<code>var</code>关键字。</li>
+<li>如果是<code>ref</code>或<code>ptr</code>类型则可以直接修改成员变量而不需要<code>var</code>关键字。</li>
+<li><code>new</code>创建的是<code>ref</code>类型，<code>create</code>创建的是<code>ptr</code>类型。</li>
+<li>如果类型需要支持用<code>create</code>创建，则在定义时不要加<code>ptr</code>（示例中的 MyObj3 类型），否则会得到一个二级指针。<figure class="highlight nim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span></span><br><span class="line">  <span class="type">MyObj3</span> = <span class="keyword">ptr</span> <span class="keyword">object</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> x = create(<span class="type">MyObj3</span>) <span class="comment"># x 是二级指针</span></span><br></pre></td></tr></table></figure></li>
+</ul>
 <h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><p><a target="_blank" rel="noopener" href="https://nim-lang.org/docs/tut2.html">Nim Tutorial (Part II)</a><br><a target="_blank" rel="noopener" href="https://nim-by-example.github.io/oop/">Object Oriented Programming</a><br><a target="_blank" rel="noopener" href="https://forum.nim-lang.org/t/5681">Why inherit RootObj?</a></p>
 
       </div>
@@ -258,7 +263,7 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2024-12-14 00:22:20
+              2024-12-17 21:36:28
             </span>
             
                   <span class="post-tags">
@@ -275,6 +280,11 @@
           </div>
           <div class="post-foot-prev">
             
+              <a href="/2024/12/24/nim-flexiblearray/" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -287,7 +297,7 @@
     <div class="title">目录</div>
     <div class="catalog-content">
       
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E5%AF%B9%E8%B1%A1%E7%B1%BB%E5%9E%8B"><span class="toc-text">定义对象类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#object"><span class="toc-text">object</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ref-object"><span class="toc-text">ref object</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ptr-object"><span class="toc-text">ptr object</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8D%E6%98%BE%E7%A4%BA%E4%BD%BF%E7%94%A8-ref-%E6%88%96-ptr-%E5%85%B3%E9%94%AE%E5%AD%97"><span class="toc-text">不显示使用 ref 或 ptr 关键字</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RootObj"><span class="toc-text">RootObj</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="toc-text">相关阅读</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E5%AF%B9%E8%B1%A1%E7%B1%BB%E5%9E%8B"><span class="toc-text">定义对象类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#object"><span class="toc-text">object</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ref-object"><span class="toc-text">ref object</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ptr-object"><span class="toc-text">ptr object</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8D%E6%98%BE%E7%A4%BA%E4%BD%BF%E7%94%A8-ref-%E6%88%96-ptr-%E5%85%B3%E9%94%AE%E5%AD%97"><span class="toc-text">不显示使用 ref 或 ptr 关键字</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RootObj"><span class="toc-text">RootObj</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E7%B1%BB%E5%9E%8B"><span class="toc-text">函数参数类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="toc-text">相关阅读</span></a></li></ol>
       
     </div>
   </div>
