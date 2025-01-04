@@ -146,7 +146,7 @@
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2024-12-17 21:36:28
+          2025-01-02 22:40:30
         </span>
         
               <span class="post-tags">
@@ -178,7 +178,7 @@
 <p>从代码中可以看出来，**<code>object</code>声明的对象默认在栈上分配，初始化会清零。如果改用<code>new</code>分配则会在堆上，且会被 GC 回收**：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">N_LIB_PRIVATE <span class="title function_">N_NIMCALL</span><span class="params">(<span class="type">void</span>, foo1__main_u9)</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">	tyObject_MyObj1__inljzvlFXKezToqKwQKx9bg* obj1;</span><br><span class="line">	obj1 = NIM_NIL;</span><br><span class="line">	obj1 = new__main_u10();</span><br><span class="line">	nimln_(<span class="number">13</span>);	(*obj1).age = ((NI)<span class="number">5</span>);</span><br><span class="line">	nimln_(<span class="number">14</span>);	colontmpD_ = dollar___systemZdollars_u8((*obj1).age);</span><br><span class="line">	eqdestroy___main_u22(obj1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h3 id="ref-object"><a href="#ref-object" class="headerlink" title="ref object"></a>ref object</h3><p>使用<code>ref</code>关键字定义对象总是在栈上分配：</p>
+<h3 id="ref-object"><a href="#ref-object" class="headerlink" title="ref object"></a>ref object</h3><p>使用<code>ref</code>关键字定义对象总是在堆上分配：</p>
 <figure class="highlight nim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span></span><br><span class="line">  <span class="type">MyObj2</span> = <span class="keyword">ref</span> <span class="keyword">object</span></span><br><span class="line">    age: <span class="type">int</span></span><br><span class="line">    </span><br><span class="line"><span class="keyword">var</span> obj2: <span class="type">MyObj2</span></span><br><span class="line">obj2.age = <span class="number">5</span></span><br><span class="line">echo obj2.age</span><br></pre></td></tr></table></figure>
 <p>程序运行会报错：<code>SIGSEGV: Illegal storage access. (Attempt to read from nil?)</code>。<br>看看对应的 C 代码：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">N_LIB_PRIVATE <span class="title function_">N_NIMCALL</span><span class="params">(<span class="type">void</span>, foo1__main_u9)</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">	tyObject_MyObj2colonObjectType___oLKZp5hB19b9cuVViusoCnEQ* obj2;</span><br><span class="line">	obj2 = NIM_NIL;</span><br><span class="line">	(*obj2).age = ((NI)<span class="number">5</span>);</span><br><span class="line">	nimln_(<span class="number">14</span>);	colontmpD_ = dollar___systemZdollars_u8((*obj2).age);</span><br><span class="line">	eqdestroy___main_u14(obj2);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -263,7 +263,7 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2024-12-17 21:36:28
+              2025-01-02 22:40:30
             </span>
             
                   <span class="post-tags">
