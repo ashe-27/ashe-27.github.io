@@ -11,7 +11,7 @@
   
   <title>
     
-      MinGW 编译 Qt 5.7.1 
+      第一个 Kotlin 程序 
       
       
       |
@@ -142,19 +142,25 @@
   <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
   <div class="container post-details" id="post-details">
     <div class="post-content">
-      <div class="post-title">MinGW 编译 Qt 5.7.1</div>
+      <div class="post-title">第一个 Kotlin 程序</div>
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2025-01-11 12:11:17
+          2025-01-23 22:08:57
         </span>
         
               <span class="post-tags">
                 <i class="iconfont icon-tags mr-10" title="标签"></i>
                 
                 <span class="span--tag mr-8">
-                  <a href="/tags/Qt/" title="Qt">
-                    #Qt
+                  <a href="/tags/Kotlin/" title="Kotlin">
+                    #Kotlin
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Gradle/" title="Gradle">
+                    #Gradle
                   </a>
                 </span>
                 
@@ -162,27 +168,34 @@
           
       </div>
       <div class="markdown-body">
-        <h2 id="安装-MinGW"><a href="#安装-MinGW" class="headerlink" title="安装 MinGW"></a>安装 MinGW</h2><p>目前 MinGW 推荐用 <a target="_blank" rel="noopener" href="https://winlibs.com/">WinLibs</a> 家编译的，安装包分为两种运行时：<code>UCRT</code>和<code>MSVCRT</code>。<br>简单地说就是<code>MSVCRT</code>用系统自带的<code>msvcrt.dll</code>文件作为运行时，而<code>UCRT</code>是新的链接方式，依赖一堆以<code>api-ms-win*</code>开头的 DLL，所以需要安装 VC 运行库。</p>
-<p><br>如果要支持 XP 系统，直觉上会选择<code>MSVCRT</code>版本，但是其实 XP 上也可以安装新的 VC 运行库，最后一个支持 XP 系统的 VC 运行库版本是<code>14.28.29213</code>。<br>下载地址：<a target="_blank" rel="noopener" href="https://download.visualstudio.microsoft.com/download/pr/566435ac-4e1c-434b-b93f-aecc71e8cffc/0D59EC7FDBF05DE813736BF875CEA5C894FFF4769F60E32E87BD48406BBF0A3A/VC_redist.x86.exe">VC_redist.x86.exe</a></p>
-<h2 id="编译-Qt"><a href="#编译-Qt" class="headerlink" title="编译 Qt"></a>编译 Qt</h2><p>和之前用 MSVC 编译 Qt 差不多，去 <a target="_blank" rel="noopener" href="https://download.qt.io/new_archive/qt/5.7/5.7.1/submodules">https://download.qt.io/new_archive&#x2F;qt&#x2F;5.7&#x2F;5.7.1&#x2F;submodules</a> 下载对应的模块编译即可。比起 MSVC，用 MinGW 不用修改任何代码，直接编译就能过。<br>我的编译选项：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">configure.bat -prefix <span class="string">&quot;C:/Qt/Qt5.7.1-gcc14.2.0-x86&quot;</span> -platform win32-g++ -confirm-license -opensource -release -shared -no-directwrite -no-angle -opengl desktop -nomake examples -nomake tests</span><br></pre></td></tr></table></figure>
-<p><code>-platform</code>要改为<code>win32-g++</code>。仅编译 Release 版本即可，这样可以加快编译进程，除非你要调试 Qt 源码。</p>
-<h3 id="QML-问题"><a href="#QML-问题" class="headerlink" title="QML 问题"></a>QML 问题</h3><p>我编译了 <a target="_blank" rel="noopener" href="https://download.qt.io/new_archive/qt/5.7/5.7.1/submodules/qtdeclarative-opensource-src-5.7.1.7z">qtdeclarative</a> 模块，这个模块用于开发 QML 程序，当我运行程序时提示：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JIT is disabled <span class="keyword">for</span> QML. Property bindings and animations will be very slow. Visit https://wiki.qt.io/V4 to learn about possible solutions <span class="keyword">for</span> your platform.</span><br></pre></td></tr></table></figure>
-<p>访问 <a target="_blank" rel="noopener" href="https://wiki.qt.io/V4">https://wiki.qt.io/V4</a> 后得知在编译时会自动检测编译器和系统环境，决定是否启用 JIT，在<code>qv4global_p.h</code>文件中：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Decide whether to enable or disable the JIT</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// White list architectures</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// <span class="doctag">NOTE:</span> This should match the logic in qv4targetplatform_p.h!</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> defined(Q_PROCESSOR_X86) &amp;&amp; !defined(__ILP32__) \</span></span><br><span class="line"><span class="meta">    &amp;&amp; (defined(Q_OS_WIN) || defined(Q_OS_LINUX) || defined(Q_OS_QNX) || defined(Q_OS_FREEBSD))</span></span><br><span class="line"><span class="meta">#  <span class="keyword">define</span> V4_ENABLE_JIT</span></span><br><span class="line"><span class="meta">#<span class="keyword">elif</span> defined(Q_PROCESSOR_X86_64) &amp;&amp; !defined(__ILP32__) \</span></span><br><span class="line"><span class="meta">    &amp;&amp; (defined(Q_OS_WIN) || defined(Q_OS_LINUX) || defined(Q_OS_MAC) || defined(Q_OS_FREEBSD))</span></span><br><span class="line"><span class="meta">#  <span class="keyword">define</span> V4_ENABLE_JIT</span></span><br><span class="line"><span class="meta">#<span class="keyword">elif</span> defined(Q_PROCESSOR_ARM_32)</span></span><br><span class="line"><span class="meta">#  <span class="keyword">if</span> defined(thumb2) || defined(__thumb2__) || ((defined(__thumb) || defined(__thumb__)) &amp;&amp; __TARGET_ARCH_THUMB-0 == 4)</span></span><br><span class="line"><span class="meta">#    <span class="keyword">define</span> V4_ENABLE_JIT</span></span><br><span class="line"><span class="meta">#  <span class="keyword">elif</span> defined(__ARM_ARCH_ISA_THUMB) &amp;&amp; __ARM_ARCH_ISA_THUMB == 2 <span class="comment">// clang 3.5 and later will set this if the core supports the Thumb-2 ISA.</span></span></span><br><span class="line"><span class="meta">#    <span class="keyword">define</span> V4_ENABLE_JIT</span></span><br><span class="line"><span class="meta">#  <span class="keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">elif</span> defined(Q_PROCESSOR_ARM_64)</span></span><br><span class="line"><span class="meta">#  <span class="keyword">if</span> defined(Q_OS_LINUX)</span></span><br><span class="line"><span class="meta">#    <span class="keyword">define</span> V4_ENABLE_JIT</span></span><br><span class="line"><span class="meta">#  <span class="keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">elif</span> defined(Q_PROCESSOR_MIPS_32) &amp;&amp; defined(Q_OS_LINUX)</span></span><br><span class="line"><span class="meta">#  <span class="keyword">define</span> V4_ENABLE_JIT</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Black list some platforms</span></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> defined(V4_ENABLE_JIT)</span></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> defined(Q_OS_IOS) || defined(Q_OS_TVOS)</span></span><br><span class="line"><span class="meta">#    <span class="keyword">undef</span> V4_ENABLE_JIT</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// For debug purposes: add CONFIG+=force-compile-jit to qmake&#x27;s command-line to always compile the JIT.</span></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> defined(V4_FORCE_COMPILE_JIT) &amp;&amp; !defined(V4_ENABLE_JIT)</span></span><br><span class="line"><span class="meta">#  <span class="keyword">define</span> V4_ENABLE_JIT</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Do certain things depending on whether the JIT is enabled or disabled</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> V4_ENABLE_JIT</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ENABLE_YARR_JIT 1</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ENABLE_JIT 1</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ENABLE_ASSEMBLER 1</span></span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ENABLE_YARR_JIT 0</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ENABLE_ASSEMBLER 0</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ENABLE_JIT 0</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
-<p>这里没看明白为什么用 MSVC 编译时通过了，用 MinGW 却没有通过。不过根据提示，在编译<code>qtdeclarative</code>模块时追加<code>force-compile-jit</code>选项强制开启</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">qmake.exe -platform win32-g++ CONFIG+=force-compile-jit</span><br></pre></td></tr></table></figure>
-
-<h2 id="放弃-MinGW"><a href="#放弃-MinGW" class="headerlink" title="放弃 MinGW"></a>放弃 MinGW</h2><p>然后尝试用 MinGW 编译的 Qt 运行一个以前的用 VC 的老项目又出现一些新问题，最后懒得折腾了，还是拥抱亲儿子 MSVC 更稳定。<br>MinGW 的唯一优势可能就是跨平台开发一致的体验，但在稳定性、可调试性、第三方库的支持上都是不如 MSVC 的。</p>
-<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/331375227">Qt 用 MSVC 和 MinGW 哪个编译器编译程序比较好？</a></p>
+        <h2 id="配置开发环境"><a href="#配置开发环境" class="headerlink" title="配置开发环境"></a>配置开发环境</h2><ol>
+<li>下载安装 Java，这个网上有太多资料，不说了。</li>
+<li>下载安装<code>Kotlin</code>编译器：<a target="_blank" rel="noopener" href="https://github.com/JetBrains/kotlin/releases/">https://github.com/JetBrains/kotlin/releases/</a>。解压后将其<code>bin</code>目录加入系统环境变量<code>PATH</code>中。<br>打开控制台输入<code>kotlinc -version</code>验证一下：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Kotlin version 2.1.0-release-394 (JRE 22.0.1+8-16)</span><br></pre></td></tr></table></figure></li>
+<li>去国内镜像站下载 <a target="_blank" rel="noopener" href="https://gradle.org/">Gradle</a>，比如腾讯的 <a target="_blank" rel="noopener" href="https://mirrors.cloud.tencent.com/gradle/">https://mirrors.cloud.tencent.com/gradle/</a>。解压后将其<code>bin</code>目录加入系统环境变量<code>PATH</code>中。<br>打开控制台输入<code>gradle -v</code>验证一下：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">------------------------------------------------------------</span><br><span class="line">Gradle 8.13-milestone-3</span><br><span class="line">------------------------------------------------------------</span><br><span class="line"></span><br><span class="line">Build time:    2025-01-21 16:46:36 UTC</span><br><span class="line">Revision:      008d02e96f845b2d5a628758831c97d305983d68</span><br><span class="line"></span><br><span class="line">Kotlin:        2.0.21</span><br><span class="line">Groovy:        3.0.22</span><br><span class="line">Ant:           Apache Ant(TM) version 1.10.15 compiled on August 25 2024</span><br><span class="line">Launcher JVM:  22.0.1 (Oracle Corporation 22.0.1+8-16)</span><br><span class="line">Daemon JVM:    C:\Program Files\Java\jdk-22 (no JDK specified, using current Java home)</span><br><span class="line">OS:            Windows 11 10.0 amd64</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="新建项目"><a href="#新建项目" class="headerlink" title="新建项目"></a>新建项目</h2><p>项目结构：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">hello/</span><br><span class="line">  ├── build.gradle.kts</span><br><span class="line">  ├── settings.gradle.kts</span><br><span class="line">  └── src/</span><br><span class="line">      └── main/</span><br><span class="line">          └── kotlin/</span><br><span class="line">              └── Main.kt</span><br></pre></td></tr></table></figure>
+<p><code>settings.gradle.kts</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rootProject.name = &quot;hello&quot;</span><br></pre></td></tr></table></figure>
+<p><code>build.gradle.kts</code>：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">plugins &#123;</span><br><span class="line">    kotlin(<span class="string">&quot;jvm&quot;</span>) version <span class="string">&quot;2.1.0&quot;</span></span><br><span class="line">    application</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">repositories &#123;</span><br><span class="line">    maven(<span class="string">&quot;https://maven.aliyun.com/repository/public&quot;</span>)</span><br><span class="line">    maven(<span class="string">&quot;https://maven.aliyun.com/repository/google&quot;</span>)</span><br><span class="line">    maven(<span class="string">&quot;https://maven.aliyun.com/repository/gradle-plugin&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">application &#123;</span><br><span class="line">    mainClass.<span class="keyword">set</span>(<span class="string">&quot;MainKt&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>Main.kt</code>：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    println(<span class="string">&quot;Hello, World!&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gradle run</span><br></pre></td></tr></table></figure>
+<p>构建可执行<code>jar</code>包：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">gradle build</span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行</span></span><br><span class="line">java -jar build\libs\hello.jar</span><br></pre></td></tr></table></figure>
+<p>会报错：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hello.jar中没有主清单属性</span><br></pre></td></tr></table></figure>
+<p>编辑<code>build.gradle.kts</code>文件，追加：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">// 添加这个配置来创建可执行的 jar</span><br><span class="line">tasks.jar &#123;</span><br><span class="line">    manifest &#123;</span><br><span class="line">        attributes[&quot;Main-Class&quot;] = &quot;MainKt&quot;</span><br><span class="line">    &#125;</span><br><span class="line">    // 这行会将所有依赖（包括 Kotlin 运行时）打包进 jar</span><br><span class="line">    from(configurations.runtimeClasspath.get().map &#123; if (it.isDirectory) it else zipTree(it) &#125;)</span><br><span class="line">    duplicatesStrategy = DuplicatesStrategy.EXCLUDE</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
       </div>
       
         <div class="prev-or-next">
           <div class="post-foot-next">
             
-              <a href="/2025/01/09/xp-get-networkinterface/" target="_self">
+              <a href="/2025/01/11/mingw-qt571/" target="_self">
                 <i class="iconfont icon-chevronleft"></i>
                 <span>上一页</span>
               </a>
@@ -191,15 +204,21 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2025-01-11 12:11:17
+              2025-01-23 22:08:57
             </span>
             
                   <span class="post-tags">
                     <i class="iconfont icon-tags mr-10" title="标签"></i>
                     
                     <span class="span--tag mr-8">
-                      <a href="/tags/Qt/" title="Qt">
-                        #Qt
+                      <a href="/tags/Kotlin/" title="Kotlin">
+                        #Kotlin
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Gradle/" title="Gradle">
+                        #Gradle
                       </a>
                     </span>
                     
@@ -207,11 +226,6 @@
               
           </div>
           <div class="post-foot-prev">
-            
-              <a href="/2025/01/23/kotlin-gradle-hello/" target="_self">
-                <span>下一页</span>
-                <i class="iconfont icon-chevronright"></i>
-              </a>
             
           </div>
         </div>
@@ -225,7 +239,7 @@
     <div class="title">目录</div>
     <div class="catalog-content">
       
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85-MinGW"><span class="toc-text">安装 MinGW</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E8%AF%91-Qt"><span class="toc-text">编译 Qt</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#QML-%E9%97%AE%E9%A2%98"><span class="toc-text">QML 问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%BE%E5%BC%83-MinGW"><span class="toc-text">放弃 MinGW</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="toc-text">相关阅读</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83"><span class="toc-text">配置开发环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B0%E5%BB%BA%E9%A1%B9%E7%9B%AE"><span class="toc-text">新建项目</span></a></li></ol>
       
     </div>
   </div>
@@ -493,12 +507,12 @@
       </a>
       <div class="share-content hidden">
         
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + MinGW%20%E7%BC%96%E8%AF%91%20Qt%205.7.1 + '&url=' + https%3A%2F%2Fashe27.github.io%2F2025%2F01%2F11%2Fmingw-qt571%2F + '" target="_blank" title="Twitter">
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E7%AC%AC%E4%B8%80%E4%B8%AA%20Kotlin%20%E7%A8%8B%E5%BA%8F + '&url=' + https%3A%2F%2Fashe27.github.io%2F2025%2F01%2F23%2Fkotlin-gradle-hello%2F + '" target="_blank" title="Twitter">
             <i class="iconfont icon-twitter"></i>
           </a>
         
         
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://ashe27.github.io/2025/01/11/mingw-qt571/" target="_blank" title="Facebook">
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://ashe27.github.io/2025/01/23/kotlin-gradle-hello/" target="_blank" title="Facebook">
             <i class="iconfont icon-facebooksquare"></i>
           </a>
         
